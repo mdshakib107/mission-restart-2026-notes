@@ -1,0 +1,28 @@
+আমি একটি JavaScript tutorial video-এর transcript/text upload করছি।
+
+তুমি এই transcript থেকে বাংলায় বইয়ের মতো detailed study notes বানাবে, যাতে শুধু notes পড়েই ভিডিওর সব concept পরিষ্কারভাবে বুঝতে পারি।
+
+Output format:
+
+1. Notes অবশ্যই Markdown `.md` format-এ হবে।
+2. শেষে একটি downloadable `.md` file তৈরি করে দেবে।
+3. ভাষা হবে সহজ বাংলা, কিন্তু programming terms যেমন variable, function, object, array, primitive, non-primitive, DOM, async, defer, scope ইত্যাদি English-এই রাখবে।
+4. Notes এমনভাবে লিখবে যেন beginner student ভিডিও না দেখেও lesson পুরো বুঝতে পারে।
+5. শুধু summary নয়, detailed explanation দিতে হবে।
+6. ভিডিওতে যেসব concept এসেছে সেগুলো section-wise সাজাবে।
+7. যেখানে দরকার table ব্যবহার করবে।
+8. যেখানে code আছে, সেগুলো proper code block-এ দেবে।
+9. প্রতিটি important concept-এর সহজ explanation, example, common mistake, এবং মনে রাখার নিয়ম দেবে।
+10. ভিডিওতে assignment/task থাকলে শেষে আলাদা Assignment section বানাবে।
+11. শেষে Final Summary এবং Practice Checklist দেবে।
+12. Notes structured হবে, যেমন:
+
+* Table of Contents
+* Main concepts
+* Code examples
+* Important differences
+* Common mistakes
+* Assignment
+* Final summary
+
+আমার লক্ষ্য হলো এই notes future revision-এর জন্য ব্যবহার করা, তাই output যতটা possible complete, organized, beginner-friendly এবং বইয়ের মতো explanatory হবে।

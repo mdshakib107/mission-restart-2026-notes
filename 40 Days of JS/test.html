@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SHM Energy Animation</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #0b0f19;
+        color: #ffffff;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+
+      h2 {
+        margin-bottom: 30px;
+        font-weight: 400;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+
+      /* Container for the whole simulation */
+      .simulation-container {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 12px;
+        padding: 30px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+
+      /* 1. Mechanical Motion Area (Spring & Block) */
+      .motion-area {
+        position: relative;
+        width: 100%;
+        height: 120px;
+        border-bottom: 2px solid #4b5563;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: flex-end;
+      }
+
+      /* Fixed Wall */
+      .wall {
+        width: 10px;
+        height: 80px;
+        background: #374151;
+        border-right: 2px solid #4b5563;
+      }
+
+      /* Spring (Simulated via width transition) */
+      .spring {
+        height: 10px;
+        border-top: 4px dashed #9ca3af;
+        border-bottom: 4px dashed #9ca3af;
+        align-self: center;
+        margin-bottom: -35px;
+        animation: stretch 3s infinite ease-in-out;
+      }
+
+      /* Oscillating Block */
+      .block {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        border-radius: 6px;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        animation: oscillate 3s infinite ease-in-out;
+        margin-bottom: 0;
+      }
+
+      /* Labels for positions */
+      .axis-label {
+        position: absolute;
+        bottom: -25px;
+        font-size: 12px;
+        color: #9ca3af;
+      }
+      .label-left {
+        left: 95px;
+      }
+      .label-center {
+        left: calc(50% + 5px);
+        transform: translateX(-50%);
+      }
+      .label-right {
+        right: 45px;
+      }
+
+      /* 2. Energy Dashboard Area */
+      .energy-dashboard {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+      }
+
+      .energy-bar-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 45%;
+      }
+
+      .bar-outer {
+        width: 35px;
+        height: 150px;
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .bar-inner {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        border-radius: 20px;
+      }
+
+      /* Kinetic Energy Colors & Animation */
+      .ke-inner {
+        background: linear-gradient(to top, #059669, #10b981);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        animation: ke-change 3s infinite ease-in-out;
+      }
+
+      /* Potential Energy Colors & Animation */
+      .pe-inner {
+        background: linear-gradient(to top, #dc2626, #ef4444);
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        animation: pe-change 3s infinite ease-in-out;
+      }
+
+      .bar-title {
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .ke-title {
+        color: #10b981;
+      }
+      .pe-title {
+        color: #ef4444;
+      }
+
+      /* --- ANIMATION KEYFRAMES (The Physics Logic) --- */
+
+      /* Block Movement (SHM) */
+      @keyframes oscillate {
+        0%,
+        100% {
+          transform: translateX(100px);
+        } /* Extreme Right (+A) */
+        50% {
+          transform: translateX(-100px);
+        } /* Extreme Left (-A) */
+      }
+
+      /* Spring Stretching & Compressing */
+      @keyframes stretch {
+        0%,
+        100% {
+          width: 250px;
+        }
+        50% {
+          width: 50px;
+        }
+      }
+
+      /* Kinetic Energy: Max at center (50%), Min at extremes (0%, 100%) */
+      @keyframes ke-change {
+        0%,
+        100% {
+          height: 5%;
+        }
+        25%,
+        75% {
+          height: 100%;
+        } /* Passes equilibrium at maximum speed */
+        50% {
+          height: 5%;
+        }
+      }
+
+      /* Potential Energy: Min at center, Max at extremes (0%, 50%, 100%) */
+      @keyframes pe-change {
+        0%,
+        100% {
+          height: 95%;
+        }
+        25%,
+        75% {
+          height: 0%;
+        } /* Zero at equilibrium */
+        50% {
+          height: 95%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Simple Harmonic Motion (SHM) Energy Visualization</h2>
+
+    <div class="simulation-container">
+      <div class="motion-area">
+        <div class="wall"></div>
+        <div class="spring"></div>
+        <div class="block"></div>
+
+        <div class="axis-label label-left">-A</div>
+        <div class="axis-label label-center">Equilibrium (x=0)</div>
+        <div class="axis-label label-right">+A</div>
+      </div>
+
+      <div class="energy-dashboard">
+        <div class="energy-bar-container">
+          <div class="bar-outer">
+            <div class="bar-inner ke-inner"></div>
+          </div>
+          <div class="bar-title ke-title">Kinetic Energy (E<sub>k</sub>)</div>
+        </div>
+
+        <div class="energy-bar-container">
+          <div class="bar-outer">
+            <div class="bar-inner pe-inner"></div>
+          </div>
+          <div class="bar-title pe-title">Potential Energy (E<sub>p</sub>)</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
