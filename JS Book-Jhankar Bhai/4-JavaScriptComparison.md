@@ -1,4 +1,4 @@
-# Comparison Operator, Variable Comparison এবং === বনাম == — গুরুত্বপূর্ণ নোট
+# Comparison Operator, Variable Comparison এবং `===` বনাম `==` — গুরুত্বপূর্ণ নোট
 
 ---
 
@@ -13,26 +13,26 @@ JavaScript-এ এক মানের সাথে আরেক মানের 
 - `true`
 - `false`
 
-অর্থাৎ Boolean Value।
+অর্থাৎ **Boolean Value**।
 
 ---
 
 ## Comparison Operator
 
-| Operator | অর্থ                      |
-| -------- | ------------------------- | --- | ------------------------------ |
-| `>`      | বড়                       |
-| `<`      | ছোট                       |
-| `==`     | সমান                      |
-| `>=`     | বড় বা সমান               |
-| `<=`     | ছোট বা সমান               |
-| `!=`     | সমান নয়                  |
-| `&&`     | AND (দুইটাই সত্য হতে হবে) |
-| `        |                           | `   | OR (যেকোনো একটি সত্য হলেই হবে) |
+| Operator | অর্থ |
+|----------|------|
+| `>` | বড় |
+| `<` | ছোট |
+| `==` | সমান |
+| `>=` | বড় বা সমান |
+| `<=` | ছোট বা সমান |
+| `!=` | সমান নয় |
+| `&&` | AND (দুইটাই সত্য হতে হবে) |
+| `\|\|` | OR (যেকোনো একটি সত্য হলেই হবে) |
 
 ---
 
-## Greater Than (>)
+## Greater Than (`>`)
 
 ```javascript
 console.log(5 > 10);
@@ -44,11 +44,11 @@ console.log(5 > 10);
 false
 ```
 
-কারণ 5, 10-এর চেয়ে বড় নয়।
+**কারণ:** `5`, `10`-এর চেয়ে বড় নয়।
 
 ---
 
-## Less Than (<)
+## Less Than (`<`)
 
 ```javascript
 console.log(5 < 10);
@@ -60,11 +60,11 @@ console.log(5 < 10);
 true
 ```
 
-কারণ 5, 10-এর চেয়ে ছোট।
+**কারণ:** `5`, `10`-এর চেয়ে ছোট।
 
 ---
 
-## Equal (==)
+## Equal (`==`)
 
 ```javascript
 console.log(5 == 10);
@@ -90,7 +90,7 @@ true
 
 ---
 
-## Greater Than or Equal (>=)
+## Greater Than or Equal (`>=`)
 
 ```javascript
 console.log(10 >= 10);
@@ -116,7 +116,7 @@ true
 
 ---
 
-## Less Than or Equal (<=)
+## Less Than or Equal (`<=`)
 
 ```javascript
 console.log(5 <= 10);
@@ -130,7 +130,7 @@ true
 
 ---
 
-## Not Equal (!=)
+## Not Equal (`!=`)
 
 ```javascript
 console.log(7 != 10);
@@ -142,7 +142,7 @@ console.log(7 != 10);
 true
 ```
 
-কারণ 7 এবং 10 সমান নয়।
+**কারণ:** `7` এবং `10` সমান নয়।
 
 ---
 
@@ -156,45 +156,18 @@ true
 
 # পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন
 
-### `>` Operator কী বোঝায়?
-
-**উত্তর:** বড়।
-
-### `<` Operator কী বোঝায়?
-
-**উত্তর:** ছোট।
-
-### `==` Operator কী কাজে লাগে?
-
-**উত্তর:** দুইটি মান সমান কি না চেক করতে।
-
-### `!=` Operator কী বোঝায়?
-
-**উত্তর:** সমান নয়।
-
-### `5 > 10` এর Output কী?
-
-**উত্তর:** `false`
-
-### `5 < 10` এর Output কী?
-
-**উত্তর:** `true`
-
-### `10 == 10` এর Output কী?
-
-**উত্তর:** `true`
-
-### `10 >= 10` এর Output কী?
-
-**উত্তর:** `true`
-
-### Comparison-এর Output কী ধরনের হয়?
-
-**উত্তর:** Boolean (`true` বা `false`)।
-
-### `&&` এবং `||` কী ধরনের Operator?
-
-**উত্তর:** Logical Operator।
+| প্রশ্ন | উত্তর |
+|--------|-------|
+| `>` Operator কী বোঝায়? | বড় |
+| `<` Operator কী বোঝায়? | ছোট |
+| `==` Operator কী কাজে লাগে? | দুইটি মান সমান কি না চেক করতে |
+| `!=` Operator কী বোঝায়? | সমান নয় |
+| `5 > 10` এর Output কী? | `false` |
+| `5 < 10` এর Output কী? | `true` |
+| `10 == 10` এর Output কী? | `true` |
+| `10 >= 10` এর Output কী? | `true` |
+| Comparison-এর Output কী ধরনের হয়? | Boolean (`true` বা `false`) |
+| `&&` এবং `\|\|` কী ধরনের Operator? | Logical Operator |
 
 ---
 
@@ -203,9 +176,8 @@ true
 ## মূল ধারণা
 
 - শুধু সংখ্যা নয়, Variable-এর সাথেও Comparison করা যায়।
-
-- Comparison-এর Result সব সময়: `true` `false`
-- Variable-এর value-এর ভিত্তিতে তুলনা করা হয়।
+- Comparison-এর Result সব সময় `true` অথবা `false`।
+- Variable-এর Value-এর ভিত্তিতে তুলনা করা হয়।
 
 ---
 
@@ -224,7 +196,7 @@ console.log(peyaraPrice > applePrice);
 false
 ```
 
-কারণ 40, 250-এর চেয়ে বড় নয়।
+**কারণ:** `40`, `250`-এর চেয়ে বড় নয়।
 
 ---
 
@@ -241,7 +213,7 @@ console.log(peyaraPrice < applePrice);
 true
 ```
 
-কারণ 40, 250-এর চেয়ে ছোট।
+**কারণ:** `40`, `250`-এর চেয়ে ছোট।
 
 ---
 
@@ -260,7 +232,7 @@ console.log(myName == friendName);
 false
 ```
 
-কারণ `"Rahim"` এবং `"Karim"` এক নয়।
+**কারণ:** `"Rahim"` এবং `"Karim"` এক নয়।
 
 ---
 
@@ -279,7 +251,7 @@ console.log(myPromise == friendPromise);
 false
 ```
 
-কারণ `true` এবং `false` সমান নয়।
+**কারণ:** `true` এবং `false` সমান নয়।
 
 ---
 
@@ -297,20 +269,20 @@ console.log(didStudy != false);
 true
 ```
 
-কারণ `true` এবং `false` ভিন্ন।
+**কারণ:** `true` এবং `false` ভিন্ন।
 
 ---
 
 ## Comparison Operator Summary
 
-| Operator | অর্থ              |
-| -------- | ----------------- |
-| `>`      | বড় কি না         |
-| `<`      | ছোট কি না         |
-| `==`     | সমান কি না        |
-| `!=`     | অসমান কি না       |
-| `>=`     | বড় বা সমান কি না |
-| `<=`     | ছোট বা সমান কি না |
+| Operator | অর্থ |
+|----------|------|
+| `>` | বড় কি না |
+| `<` | ছোট কি না |
+| `==` | সমান কি না |
+| `!=` | অসমান কি না |
+| `>=` | বড় বা সমান কি না |
+| `<=` | ছোট বা সমান কি না |
 
 ---
 
@@ -328,11 +300,13 @@ value1 operator value2
 age > 18;
 ```
 
-এখানে:
+এখানে
 
-- বামপাশের Value → `age`
-- ডানপাশের Value → `18`
-- Operator → `>`
+| অংশ | মান |
+|------|-----|
+| বামপাশের Value | `age` |
+| Operator | `>` |
+| ডানপাশের Value | `18` |
 
 ---
 
@@ -347,62 +321,33 @@ age > 18;
 
 # পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন
 
-### Variable-এর সাথে Variable তুলনা করা যায় কি?
-
-**উত্তর:** হ্যাঁ।
-
-### Comparison-এর Result কী হয়?
-
-**উত্তর:** `true` অথবা `false`
-
-### `40 > 250` এর Output কী?
-
-**উত্তর:** `false`
-
-### `40 < 250` এর Output কী?
-
-**উত্তর:** `true`
-
-### `"Rahim" == "Karim"` এর Output কী?
-
-**উত্তর:** `false`
-
-### `true == false` এর Output কী?
-
-**উত্তর:** `false`
-
-### `true != false` এর Output কী?
-
-**উত্তর:** `true`
-
-### `>=` কী বোঝায়?
-
-**উত্তর:** বড় অথবা সমান।
-
-### `<=` কী বোঝায়?
-
-**উত্তর:** ছোট অথবা সমান।
-
-### `!=` কী বোঝায়?
-
-**উত্তর:** সমান নয় (Not Equal)।
+| প্রশ্ন | উত্তর |
+|--------|-------|
+| Variable-এর সাথে Variable তুলনা করা যায় কি? | হ্যাঁ |
+| Comparison-এর Result কী হয়? | `true` অথবা `false` |
+| `40 > 250` এর Output কী? | `false` |
+| `40 < 250` এর Output কী? | `true` |
+| `"Rahim" == "Karim"` এর Output কী? | `false` |
+| `true == false` এর Output কী? | `false` |
+| `true != false` এর Output কী? | `true` |
+| `>=` কী বোঝায়? | বড় অথবা সমান |
+| `<=` কী বোঝায়? | ছোট অথবা সমান |
+| `!=` কী বোঝায়? | সমান নয় (Not Equal) |
 
 ---
 
-# ডাবল নাকি ট্রিপল ===
+# ডাবল নাকি ট্রিপল (`===`)
 
 ## মূল ধারণা
 
-JavaScript-এ সমান কি না চেক করার জন্য:
+JavaScript-এ সমান কি না চেক করার জন্য দুটি Operator ব্যবহৃত হয়।
 
 - `==`
 - `===`
 
-ব্যবহার করা হয়।
-
 ---
 
-## Double Equal (==)
+## Double Equal (`==`)
 
 ```javascript
 console.log(10 == "10");
@@ -416,12 +361,12 @@ true
 
 ### কারণ
 
-- Value দুইটিই 10।
+- Value দুইটিই `10`।
 - `==` Data Type চেক করে না।
 
 ---
 
-## Triple Equal (===)
+## Triple Equal (`===`)
 
 ```javascript
 console.log(10 === "10");
@@ -441,16 +386,16 @@ false
 
 ---
 
-## == বনাম ===
+## `==` বনাম `===`
 
-| Operator | কী চেক করে        |
-| -------- | ----------------- |
-| `==`     | শুধু Value        |
-| `===`    | Value + Data Type |
+| Operator | কী চেক করে |
+|----------|-------------|
+| `==` | শুধু Value |
+| `===` | Value + Data Type |
 
 ---
 
-## Not Equal (!=)
+## Not Equal (`!=`)
 
 ```javascript
 console.log(10 != "10");
@@ -462,13 +407,13 @@ console.log(10 != "10");
 false
 ```
 
-কারণ:
+### কারণ
 
 `!=` শুধু Value দেখে।
 
 ---
 
-## Strict Not Equal (!==)
+## Strict Not Equal (`!==`)
 
 ```javascript
 console.log(10 !== "10");
@@ -480,7 +425,7 @@ console.log(10 !== "10");
 true
 ```
 
-কারণ:
+### কারণ
 
 - Value একই।
 - কিন্তু Type আলাদা।
@@ -502,7 +447,7 @@ true
 true
 ```
 
-কারণ:
+### কারণ
 
 - Value একই।
 - Type-ও একই (String)।
@@ -523,7 +468,7 @@ false
 false
 ```
 
-কারণ:
+### কারণ
 
 JavaScript Case-Sensitive।
 
@@ -531,7 +476,7 @@ JavaScript Case-Sensitive।
 
 ## ভালো Practice
 
-সাধারণত:
+সাধারণত
 
 ```javascript
 ===
@@ -559,44 +504,49 @@ JavaScript Case-Sensitive।
 
 ---
 
+# Comparison Operator-এর সম্পূর্ণ Summary
+
+| Operator | নাম | কী চেক করে |
+|----------|------|-------------|
+| `>` | Greater Than | বামপাশ বড় কি না |
+| `<` | Less Than | বামপাশ ছোট কি না |
+| `>=` | Greater Than or Equal | বড় অথবা সমান কি না |
+| `<=` | Less Than or Equal | ছোট অথবা সমান কি না |
+| `==` | Loose Equal | শুধু Value |
+| `===` | Strict Equal | Value + Data Type |
+| `!=` | Loose Not Equal | শুধু Value Equal নয় কি না |
+| `!==` | Strict Not Equal | Value অথবা Data Type আলাদা কি না |
+| `&&` | Logical AND | দুইটিই সত্য হতে হবে |
+| `\|\|` | Logical OR | যেকোনো একটি সত্য হলেই হবে |
+
+---
+
+# `==`, `===`, `!=`, `!==` এক নজরে
+
+| Expression | Output | কারণ |
+|------------|--------|------|
+| `10 == "10"` | `true` | Value একই |
+| `10 === "10"` | `false` | Type আলাদা |
+| `10 != "10"` | `false` | Value একই |
+| `10 !== "10"` | `true` | Type আলাদা |
+| `"apple" === "apple"` | `true` | Value ও Type একই |
+| `"test" === "TEST"` | `false` | Case আলাদা |
+
+---
+
 # পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন
 
-### `==` কী চেক করে?
+| প্রশ্ন | উত্তর |
+|--------|-------|
+| `==` কী চেক করে? | শুধু Value |
+| `===` কী চেক করে? | Value এবং Data Type |
+| `10 == "10"` এর Output কী? | `true` |
+| `10 === "10"` এর Output কী? | `false` |
+| `!=` কী চেক করে? | Value Equal নয় কি না |
+| `!==` কী চেক করে? | Value বা Data Type আলাদা কি না |
+| `"apple" === "apple"` এর Output কী? | `true` |
+| `"test" === "TEST"` এর Output কী? | `false` |
+| JavaScript-এ কোন Comparison বেশি Recommended? | `===` |
+| Strict Not Equal Operator কোনটি? | `!==` |
 
-**উত্তর:** শুধু Value।
-
-### `===` কী চেক করে?
-
-**উত্তর:** Value এবং Data Type।
-
-### `10 == "10"` এর Output কী?
-
-**উত্তর:** `true`
-
-### `10 === "10"` এর Output কী?
-
-**উত্তর:** `false`
-
-### `!=` কী চেক করে?
-
-**উত্তর:** Value Equal নয় কি না।
-
-### `!==` কী চেক করে?
-
-**উত্তর:** Value বা Data Type আলাদা কি না।
-
-### `"apple" === "apple"` এর Output কী?
-
-**উত্তর:** `true`
-
-### `"test" === "TEST"` এর Output কী?
-
-**উত্তর:** `false`
-
-### JavaScript-এ কোন Comparison বেশি Recommended?
-
-**উত্তর:** `===`
-
-### Strict Not Equal Operator কোনটি?
-
-**উত্তর:** `!==`
+---
