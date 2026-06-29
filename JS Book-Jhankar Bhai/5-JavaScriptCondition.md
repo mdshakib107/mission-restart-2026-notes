@@ -1,3 +1,54 @@
+# সূচিপত্র
+
+- [নো কনফিউশন — গুরুত্বপূর্ণ নোট](#নো-কনফিউশন--গুরুত্বপূর্ণ-নোট)
+  - [Condition কী?](#condition-কী)
+  - [if কীভাবে কাজ করে?](#if-কীভাবে-কাজ-করে)
+  - [Condition false হলে](#condition-false-হলে)
+  - [Variable দিয়ে Condition](#variable-দিয়ে-condition)
+  - [if...else](#ifelse)
+  - [Boolean condition উদাহরণ](#boolean-condition-উদাহরণ)
+  - [Comparison condition উদাহরণ](#comparison-condition-উদাহরণ)
+  - [মূল শিক্ষা](#মূল-শিক্ষা)
+- [পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন](#পরীক্ষার-জন্য-গুরুত্বপূর্ণ-প্রশ্ন)
+- [ছাত্র যখন পাত্র — গুরুত্বপূর্ণ নোট](#ছাত্র-যখন-পাত্র--গুরুত্বপূর্ণ-নোট)
+  - [মূল ধারণা](#মূল-ধারণা)
+  - [AND &&](#and)
+  - [AND false হলে](#and-false-হলে)
+  - [OR ||](#or)
+  - [OR true হলে](#or-true-হলে)
+  - [&& বনাম ||](#বনাম)
+  - [মূল শিক্ষা](#মূল-শিক্ষা)
+- [পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন](#পরীক্ষার-জন্য-গুরুত্বপূর্ণ-প্রশ্ন)
+- [ডিসকাউন্ট খেকো else-if — গুরুত্বপূর্ণ নোট](#ডিসকাউন্ট-খেকো-else-if--গুরুত্বপূর্ণ-নোট)
+  - [মূল ধারণা](#মূল-ধারণা)
+  - [if...else দিয়ে Discount](#ifelse-দিয়ে-discount)
+  - [Percentage হিসাব](#percentage-হিসাব)
+  - [else if কী?](#else-if-কী)
+  - [Discount-এর Multiple Condition](#discount-এর-multiple-condition)
+  - [else if কীভাবে কাজ করে?](#else-if-কীভাবে-কাজ-করে)
+  - [গুরুত্বপূর্ণ উদাহরণ](#গুরুত্বপূর্ণ-উদাহরণ)
+  - [মূল শিক্ষা](#মূল-শিক্ষা)
+- [পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন](#পরীক্ষার-জন্য-গুরুত্বপূর্ণ-প্রশ্ন)
+- [স্যারের বাঁশ বাসায় ঠাস — গুরুত্বপূর্ণ নোট](#স্যারের-বাঁশ-বাসায়-ঠাস--গুরুত্বপূর্ণ-নোট)
+  - [মূল ধারণা](#মূল-ধারণা)
+  - [If-Else, Else-If, Nested If-Else পার্থক্য](#if-else-else-if-nested-if-else-পার্থক্য)
+  - [Nested If-Else উদাহরণ](#nested-if-else-উদাহরণ)
+  - [কোডের ব্যাখ্যা](#কোডের-ব্যাখ্যা)
+  - [মূল শিক্ষা](#মূল-শিক্ষা)
+- [পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন](#পরীক্ষার-জন্য-গুরুত্বপূর্ণ-প্রশ্ন)
+- [লজিক্যাল নট ! ও টার্নারি অপারেটর — গুরুত্বপূর্ণ নোট](#লজিক্যাল-নট--ও-টার্নারি-অপারেটর--গুরুত্বপূর্ণ-নোট)
+  - [Logical Not ! কী?](#logical-not--কী)
+  - [Boolean সরাসরি condition-এ ব্যবহার](#boolean-সরাসরি-condition-এ-ব্যবহার)
+  - [! ব্যবহার](#ব্যবহার)
+  - [! এর কাজ](#এর-কাজ)
+- [Ternary Operator](#ternary-operator)
+  - [Ternary Operator কী?](#ternary-operator-কী)
+  - [সাধারণ if-else](#সাধারণ-if-else)
+  - [একই কাজ Ternary দিয়ে](#একই-কাজ-ternary-দিয়ে)
+  - [Variable Value Set করতে Ternary](#variable-value-set-করতে-ternary)
+  - [মূল শিক্ষা](#মূল-শিক্ষা)
+- [পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন](#পরীক্ষার-জন্য-গুরুত্বপূর্ণ-প্রশ্ন)
+
 # নো কনফিউশন — গুরুত্বপূর্ণ নোট
 
 ## Condition কী?
@@ -146,37 +197,16 @@ Rickshaw mama cholo jai.
 
 # পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন
 
-### Condition কী?
-
-**উত্তর:** কোনো শর্ত বা অবস্থা।
-
-### if কী কাজে লাগে?
-
-**উত্তর:** শর্ত সত্য হলে নির্দিষ্ট code চালাতে।
-
-### if condition false হলে কী হয়?
-
-**উত্তর:** if block-এর code চলে না।
-
-### else কী কাজে লাগে?
-
-**উত্তর:** condition false হলে অন্য code চালাতে।
-
-### if (3 < 10) true নাকি false?
-
-**উত্তর:** true।
-
-### if (13 < 10) true নাকি false?
-
-**উত্তর:** false।
-
-### if...else-এ কত ধরনের output path থাকে?
-
-**উত্তর:** দুইটি: true হলে if block, false হলে else block।
-
-### Condition-এর result সাধারণত কী হয়?
-
-**উত্তর:** Boolean: true বা false।
+| প্রশ্ন | উত্তর |
+|---|---|
+| Condition কী? | কোনো শর্ত বা অবস্থা। |
+| if কী কাজে লাগে? | শর্ত সত্য হলে নির্দিষ্ট code চালাতে। |
+| if condition false হলে কী হয়? | if block-এর code চলে না। |
+| else কী কাজে লাগে? | condition false হলে অন্য code চালাতে। |
+| if (3 < 10) true নাকি false? | true। |
+| if (13 < 10) true নাকি false? | false। |
+| if...else-এ কত ধরনের output path থাকে? | দুইটি: true হলে if block, false হলে else block। |
+| Condition-এর result সাধারণত কী হয়? | Boolean: true বা false। |
 
 ---
 
@@ -299,10 +329,10 @@ bolo baba kobul
 
 ## && বনাম ||
 
-| Operator | অর্থ      | কখন true হবে          |
-| -------- | --------- | --------------------- | --------- | ------------------------------ |
-| `&&`     | AND / এবং | সব condition true হলে |
-| `        |           | `                     | OR / অথবা | যেকোনো একটি condition true হলে |
+| Operator | অর্থ | কখন `true` হবে |
+|---|---|---|
+| `&&` | AND / এবং | সবগুলো condition `true` হলে |
+| `||` | OR / অথবা | যেকোনো একটি condition `true` হলে |
 
 ---
 
@@ -317,37 +347,16 @@ bolo baba kobul
 
 # পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন
 
-### && কী বোঝায়?
-
-**উত্তর:** AND / এবং।
-
-### || কী বোঝায়?
-
-**উত্তর:** OR / অথবা।
-
-### && কখন true হয়?
-
-**উত্তর:** সব condition true হলে।
-
-### || কখন true হয়?
-
-**উত্তর:** যেকোনো একটি condition true হলে।
-
-### salary > 50000 && isBCS == true—এখানে কয়টি condition আছে?
-
-**উত্তর:** দুইটি।
-
-### salary > 25000 || height > 72—এ একটি condition true হলে কী হবে?
-
-**উত্তর:** if block execute হবে।
-
-### &&-এ একটি condition false হলে result কী হবে?
-
-**উত্তর:** false।
-
-### ||-এ দুইটি condition false হলে result কী হবে?
-
-**উত্তর:** false।
+| প্রশ্ন | উত্তর |
+|---|---|
+| && কী বোঝায়? | AND / এবং। |
+| \|\| কী বোঝায়? | OR / অথবা। |
+| && কখন true হয়? | সব condition true হলে। |
+| \|\| কখন true হয়? | যেকোনো একটি condition true হলে। |
+| salary > 50000 && isBCS == true—এখানে কয়টি condition আছে? | দুইটি। |
+| salary > 25000 \|\| height > 72—এ একটি condition true হলে কী হবে? | if block execute হবে। |
+| &&-এ একটি condition false হলে result কী হবে? | false। |
+| \|\|-এ দুইটি condition false হলে result কী হবে? | false। |
 
 ---
 
@@ -495,37 +504,16 @@ No discount
 
 # পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন
 
-### else if কী কাজে লাগে?
-
-**উত্তর:** একাধিক condition check করতে।
-
-### if-else chain-এ কয়টি block execute হয়?
-
-**উত্তর:** একটি।
-
-### Code কোন দিক থেকে condition check করে?
-
-**উত্তর:** ওপর থেকে নিচে।
-
-### price = 6500 হলে 10% discount এর পর pay কত?
-
-**উত্তর:** 5850।
-
-### price = 4000 হলে 5% discount এর পর pay কত?
-
-**উত্তর:** 3800।
-
-### কোনো condition true না হলে কোন block চলে?
-
-**উত্তর:** else block।
-
-### Percentage discount বের করার formula কী?
-
-**উত্তর:** `price / 100 * discountPercent`
-
-### else if কি একাধিকবার ব্যবহার করা যায়?
-
-**উত্তর:** হ্যাঁ।
+| প্রশ্ন | উত্তর |
+|---|---|
+| else if কী কাজে লাগে? | একাধিক condition check করতে। |
+| if-else chain-এ কয়টি block execute হয়? | একটি। |
+| Code কোন দিক থেকে condition check করে? | ওপর থেকে নিচে। |
+| price = 6500 হলে 10% discount এর পর pay কত? | 5850। |
+| price = 4000 হলে 5% discount এর পর pay কত? | 3800। |
+| কোনো condition true না হলে কোন block চলে? | else block। |
+| Percentage discount বের করার formula কী? | `price / 100 * discountPercent` |
+| else if কি একাধিকবার ব্যবহার করা যায়? | হ্যাঁ। |
 
 ---
 
@@ -598,29 +586,14 @@ Buying PopCorn
 
 # পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন
 
-### Nested If-Else কী?
-
-**উত্তর:** একটি condition-এর ভিতরে আরেকটি condition।
-
-### Nested If-Else কখন ব্যবহার করা হয়?
-
-**উত্তর:** ধাপে ধাপে শর্ত চেক করতে।
-
-### বাইরের if false হলে ভিতরের if চলবে কি?
-
-**উত্তর:** না।
-
-### money >= 300 true হলে কী হবে?
-
-**উত্তর:** movie দেখতে যাবে।
-
-### popcornPrice <= 50 true হলে কী হবে?
-
-**উত্তর:** popcorn কিনবে।
-
-### If-Else আর Nested If-Else-এর পার্থক্য কী?
-
-**উত্তর:** If-Else এক স্তরের condition, Nested If-Else condition-এর ভিতরে আরেক condition।
+| প্রশ্ন | উত্তর |
+|---|---|
+| Nested If-Else কী? | একটি condition-এর ভিতরে আরেকটি condition। |
+| Nested If-Else কখন ব্যবহার করা হয়? | ধাপে ধাপে শর্ত চেক করতে। |
+| বাইরের if false হলে ভিতরের if চলবে কি? | না। |
+| money >= 300 true হলে কী হবে? | movie দেখতে যাবে। |
+| popcornPrice <= 50 true হলে কী হবে? | popcorn কিনবে। |
+| If-Else আর Nested If-Else-এর পার্থক্য কী? | If-Else এক স্তরের condition, Nested If-Else condition-এর ভিতরে আরেক condition। |
 
 ---
 
@@ -761,36 +734,15 @@ price = isLeader === true ? 0 : price + 100;
 
 # পরীক্ষার জন্য গুরুত্বপূর্ণ প্রশ্ন
 
-### ! operator কী করে?
+| প্রশ্ন | উত্তর |
+|---|---|
+| ! operator কী করে? | Boolean Value উল্টে দেয়। |
+| !true এর মান কী? | false |
+| !false এর মান কী? | true |
+| if (isLeader) কখন চলবে? | isLeader true হলে। |
+| if (!isPassed) কখন চলবে? | isPassed false হলে। |
+| Ternary Operator কী? | if-else এক লাইনে লেখার shortcut। |
+| Ternary Operator-এর তিনটি অংশ কী? | condition, true expression, false expression। |
 
-**উত্তর:** Boolean Value উল্টে দেয়।
 
-### !true এর মান কী?
-
-**উত্তর:** false
-
-### !false এর মান কী?
-
-**উত্তর:** true
-
-### if (isLeader) কখন চলবে?
-
-**উত্তর:** isLeader true হলে।
-
-### if (!isPassed) কখন চলবে?
-
-**উত্তর:** isPassed false হলে।
-
-### Ternary Operator কী?
-
-**উত্তর:** if-else এক লাইনে লেখার shortcut।
-
-### Ternary Operator-এর তিনটি অংশ কী?
-
-**উত্তর:** condition, true expression, false expression।
-
-### Ternary Operator-এর Syntax কী?
-
-```javascript
-condition ? trueExpression : falseExpression;
-```
+উদাহরণ:
