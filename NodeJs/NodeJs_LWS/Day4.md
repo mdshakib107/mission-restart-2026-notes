@@ -1,19 +1,4 @@
 # Node.js Global Object এবং Module System
-
-## Overview
-
-এই অধ্যায়ে Node.js-এর দুইটি মৌলিক কিন্তু অত্যন্ত গুরুত্বপূর্ণ concept আলোচনা করা হয়েছে:
-
-1. **Node.js Global Object**
-2. **Node.js Module System**
-
-ভিডিওতে instructor শুরু করেছেন browser-based JavaScript-এর পরিচিত `window` object দিয়ে, তারপর দেখিয়েছেন Node.js environment-এ `window` নেই, কিন্তু এর পরিবর্তে `global` object আছে। এরপর ধাপে ধাপে বোঝানো হয়েছে কেন Node.js-এর প্রতিটি `.js` file আলাদা module হিসেবে কাজ করে, কীভাবে `require()` দিয়ে অন্য file বা package আনা যায়, এবং কীভাবে `module.exports` দিয়ে কোনো value বা functionality অন্য file-এ পাঠানো যায়।
-
-ভিডিওর মূল বক্তব্য হলো: **Node.js আলাদা programming language নয়; এটি JavaScript runtime।** অর্থাৎ frontend-এ যে JavaScript আমরা browser-এ ব্যবহার করি, সেই একই language backend-এ ব্যবহার করার সুযোগ দেয় Node.js।
-
----
-# Node.js Global Object এবং Module System
-
 ## Table of Contents
 
 * [Overview](#overview)
@@ -45,6 +30,20 @@
 * [Quick Revision](#quick-revision)
 * [Interview / Exam Style Questions](#interview--exam-style-questions)
 * [Key Takeaways](#key-takeaways)
+
+## Overview
+
+এই অধ্যায়ে Node.js-এর দুইটি মৌলিক কিন্তু অত্যন্ত গুরুত্বপূর্ণ concept আলোচনা করা হয়েছে:
+
+1. **Node.js Global Object**
+2. **Node.js Module System**
+
+ভিডিওতে instructor শুরু করেছেন browser-based JavaScript-এর পরিচিত `window` object দিয়ে, তারপর দেখিয়েছেন Node.js environment-এ `window` নেই, কিন্তু এর পরিবর্তে `global` object আছে। এরপর ধাপে ধাপে বোঝানো হয়েছে কেন Node.js-এর প্রতিটি `.js` file আলাদা module হিসেবে কাজ করে, কীভাবে `require()` দিয়ে অন্য file বা package আনা যায়, এবং কীভাবে `module.exports` দিয়ে কোনো value বা functionality অন্য file-এ পাঠানো যায়।
+
+ভিডিওর মূল বক্তব্য হলো: **Node.js আলাদা programming language নয়; এটি JavaScript runtime।** অর্থাৎ frontend-এ যে JavaScript আমরা browser-এ ব্যবহার করি, সেই একই language backend-এ ব্যবহার করার সুযোগ দেয় Node.js।
+
+---
+
 
 
 ## Prerequisites
