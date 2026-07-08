@@ -1,3 +1,8 @@
+# Day 10 — JavaScript Scope এবং Scope Chain  
+## বাংলা Detailed Study Notes
+
+> Lesson context: এটি “40 Days of JavaScript” journey-এর Day 10 lesson। এই lesson-এ মূল focus হলো **Scope**, **Scope Chain**, `var` / `let` / `const`-এর scope behavior, **Variable Shadowing**, এবং loop-এর ভিতরে `var` বনাম `let` ব্যবহার।  
+> আগের lesson-এ Hoisting এবং Temporal Dead Zone (TDZ) আলোচনা করা হয়েছিল। এই lesson সেই understanding-এর উপর ভিত্তি করে তৈরি।
 ```js
 console.log("Day 10");
 ```
