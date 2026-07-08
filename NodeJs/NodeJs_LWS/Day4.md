@@ -12,6 +12,40 @@
 ভিডিওর মূল বক্তব্য হলো: **Node.js আলাদা programming language নয়; এটি JavaScript runtime।** অর্থাৎ frontend-এ যে JavaScript আমরা browser-এ ব্যবহার করি, সেই একই language backend-এ ব্যবহার করার সুযোগ দেয় Node.js।
 
 ---
+# Node.js Global Object এবং Module System
+
+## Table of Contents
+
+* [Overview](#overview)
+* [Prerequisites](#prerequisites)
+* [Main Concepts](#main-concepts)
+* [Detailed Explanation](#detailed-explanation)
+
+  * [1. Browser JavaScript-এ `window` Object](#1-browser-javascript-এ-window-object)
+  * [2. Node.js-এ `window` Object নেই](#2-nodejs-এ-window-object-নেই)
+  * [3. Node.js-এর `global` Object](#3-nodejs-এর-global-object)
+  * [4. Browser Global Variable বনাম Node.js Global Variable](#4-browser-global-variable-বনাম-nodejs-global-variable)
+  * [5. `__dirname` এবং `__filename`](#5-__dirname-এবং-__filename)
+  * [6. Browser JavaScript-এর Global Pollution Problem](#6-browser-javascript-এর-global-pollution-problem)
+  * [7. Node.js Module System](#7-nodejs-module-system)
+  * [8. First Custom Module তৈরি করা](#8-first-custom-module-তৈরি-করা)
+  * [9. `module.exports`](#9-moduleexports)
+  * [10. `module` Object কী?](#10-module-object-কী)
+  * [11. Multiple Values Export করা](#11-multiple-values-export-করা)
+  * [12. `require()` Function](#12-require-function)
+  * [13. Relative Path: `./`, `../`](#13-relative-path--)
+  * [14. Node.js Module Wrapper Function](#14-nodejs-module-wrapper-function)
+  * [15. `exports` বনাম `module.exports`](#15-exports-বনাম-moduleexports)
+  * [16. External Module: npm/yarn Package ব্যবহার](#16-external-module-npmyarn-package-ব্যবহার)
+  * [17. Built-in Module](#17-built-in-module)
+  * [18. Module-এর তিন ধরন](#18-module-এর-তিন-ধরন)
+* [Code Examples](#code-examples)
+* [Common Mistakes](#common-mistakes)
+* [Best Practices](#best-practices)
+* [Quick Revision](#quick-revision)
+* [Interview / Exam Style Questions](#interview--exam-style-questions)
+* [Key Takeaways](#key-takeaways)
+
 
 ## Prerequisites
 
