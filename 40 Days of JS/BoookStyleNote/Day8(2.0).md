@@ -23,11 +23,12 @@
 15. [Stack Memory ও Heap Memory](#stack-memory-ও-heap-memory)
 16. [Primitive vs Non-Primitive Memory Behavior](#primitive-vs-non-primitive-memory-behavior)
 17. [Garbage Collection](#garbage-collection)
-18. [Important Differences](#important-differences)
-19. [Common Mistakes](#common-mistakes)
-20. [Assignment](#assignment)
-21. [Final Summary](#final-summary)
-22. [Practice Checklist](#practice-checklist)
+18. [Screenshot-based Visual Revision Diagrams](#screenshot-based-visual-revision-diagrams)
+19. [Important Differences](#important-differences)
+20. [Common Mistakes](#common-mistakes)
+21. [Assignment](#assignment)
+22. [Final Summary](#final-summary)
+23. [Practice Checklist](#practice-checklist)
 
 ---
 
@@ -1204,6 +1205,347 @@ user      → ZB01
 ### Important Note
 
 Garbage Collection exactly কখন হবে, সেটা developer manually control করে না। JavaScript engine নিজে decide করে। এই lesson-এ high-level idea দেওয়া হয়েছে, advanced module-এ detail আলোচনা হবে।
+
+---
+
+## Screenshot-based Visual Revision Diagrams
+
+এই অংশটি তোমার দেওয়া screenshots-এর visual flow-কে text/diagram আকারে সাজিয়ে দিয়েছে, যাতে `.md` file standalone থাকে। অর্থাৎ image না থাকলেও diagram পড়ে একই concept revise করা যাবে।
+
+---
+
+### Visual 1: Execution Context → GEC → CP + EP
+
+Screenshot-এর প্রথম diagram-এ দেখানো হয়েছে যে JavaScript code run শুরু হলে প্রথমে **Global Execution Context (GEC)** তৈরি হয়। GEC আবার দুই phase-এ ভাগ হয়:
+
+```text
+Execution Context
+        |
+        v
+Global Execution Context (GEC)
+        |
+        +-------------------------+
+        |                         |
+        v                         v
+ Creation Phase             Execution Phase
+```
+
+#### Example code
+
+```js
+var name = 'Tom';
+
+function sayName() {
+  console.log(this.name);
+}
+```
+
+#### GEC Creation Phase-এ কী হয়?
+
+```text
+1. window object তৈরি হয়
+2. this keyword তৈরি হয়
+3. browser global context-এ window === this হয়
+4. variable name-এর জন্য memory allocate হয়
+5. name initially undefined হয়
+6. sayName() function body memory-তে রাখা হয়
+```
+
+#### GEC Execution Phase-এ কী হয়?
+
+```text
+1. name variable-এ actual value 'Tom' assign হয়
+2. function declaration line-এ নতুন কিছু execute হয় না, কারণ function body creation phase-এই memory-তে ছিল
+3. এই code-এ sayName() call করা হয়নি, তাই sayName-এর FEC তৈরি হবে না
+```
+
+#### মনে রাখার নিয়ম
+
+> Function declaration memory-তে যায়, কিন্তু function body run হয় শুধু function call হলে।
+
+#### Common mistake
+
+```js
+function sayName() {
+  console.log(this.name);
+}
+```
+
+এটা লিখলেই output আসবে না। Output পেতে হলে call করতে হবে:
+
+```js
+sayName();
+```
+
+---
+
+### Visual 2: Function Execution Context (FEC) for `tom()`
+
+দ্বিতীয় screenshot-এ `tom()` function call করার পর GEC-এর ভিতরে কীভাবে FEC তৈরি হয় সেটা nested box দিয়ে দেখানো হয়েছে।
+
+#### Example code
+
+```js
+var name = 'Tom';
+
+function tom() {
+   console.log(this.name + ' Runs');
+}
+
+// Invoke the function tom()
+tom();
+```
+
+#### Flow diagram
+
+```text
+GEC
+├── Creation Phase
+│   ├── name: undefined
+│   └── tom(): function body allocated in memory
+│
+└── Execution Phase
+    ├── name: 'Tom'
+    └── tom(): execute
+        |
+        v
+        FEC for tom()
+        ├── Creation Phase
+        │   └── no local variable / no inner function
+        │
+        └── Execution Phase
+            └── console.log(this.name + ' Runs') execute
+                |
+                v
+                FEC for console.log()
+                ├── Creation Phase
+                └── Execution Phase
+```
+
+#### Beginner-friendly explanation
+
+`tom()` call না হওয়া পর্যন্ত `tom` function body memory-তে থাকলেও execute হবে না। যখন `tom()` line পাওয়া যায়, JavaScript বলে: “এখন আমাকে `tom` function চালাতে হবে।” তাই `tom()`-এর জন্য নতুন **Function Execution Context** তৈরি হয়।
+
+`tom()`-এর ভিতরে আবার `console.log()` আছে। `console.log` নিজেও function, তাই technically তার জন্যও function execution context তৈরি হতে পারে। Lesson-এ simple explanation-এর জন্য অনেক সময় `console.log`-এর internal FEC ignore করা হয়েছে।
+
+#### Expected output
+
+Browser global non-strict script-এ:
+
+```text
+Tom Runs
+```
+
+কারণ global `var name = 'Tom'` browser-এ `window.name`-এর সাথে যুক্ত হতে পারে, আর সাধারণ function call-এ non-strict mode-এ `this` global object অর্থাৎ `window` refer করতে পারে।
+
+#### Common mistake
+
+`this.name` সব environment-এ same result দেবে—এটা ভাবা ভুল। Browser global script, strict mode, module, Node.js—সব জায়গায় `this` behavior same নাও হতে পারে। এই lesson-এর explanation browser global script context ধরে করা হয়েছে।
+
+---
+
+### Visual 3: Complex Example-এর GEC/FEC CP/EP Map
+
+তৃতীয় screenshot-এ বড় code block-এর পাশে GEC, `testMe()` FEC এবং `testAgain()` FEC-এর CP/EP flow দেখানো হয়েছে।
+
+#### Full code
+
+```js
+console.log("Inside Global Execution Context");
+var a = 5;
+
+function testMe() {
+    console.log("Inside testMe Execution context");
+    var b = 10;
+    var user = {
+        name: "tapas",
+        country: "India"
+    };
+
+    function testAgain() {
+        console.log("Inside testAgain Execution Context");
+        console.log("Exiting testAgain Execution Context");
+    }
+
+    testAgain();
+    console.log("Exiting testMe execution context");
+}
+
+testMe();
+console.log("Exiting global execution context");
+```
+
+#### GEC → FEC hierarchy
+
+```text
+GEC
+├── CP
+│   ├── a: undefined
+│   └── testMe: function body in memory
+│
+└── EP
+    ├── console.log("Inside Global Execution Context")
+    ├── a: 5
+    └── testMe: execute
+        |
+        v
+        FEC for testMe()
+        ├── CP
+        │   ├── b: undefined
+        │   ├── user: undefined
+        │   └── testAgain: function body in memory
+        │
+        └── EP
+            ├── console.log("Inside testMe Execution context")
+            ├── b: 10
+            ├── user: { name: 'tapas', country: 'India' }
+            └── testAgain: execute
+                |
+                v
+                FEC for testAgain()
+                ├── CP
+                │   └── no local variable / no inner function
+                │
+                └── EP
+                    ├── console.log("Inside testAgain Execution Context")
+                    └── console.log("Exiting testAgain Execution Context")
+```
+
+#### Pause/Resume rule
+
+```text
+GEC execution starts
+  ↓
+testMe() পাওয়া যায় → GEC pause
+  ↓
+testMe execution starts
+  ↓
+testAgain() পাওয়া যায় → testMe pause
+  ↓
+testAgain execution completes → return to testMe
+  ↓
+testMe execution completes → return to GEC
+  ↓
+GEC execution completes
+```
+
+#### Output order
+
+```text
+Inside Global Execution Context
+Inside testMe Execution context
+Inside testAgain Execution Context
+Exiting testAgain Execution Context
+Exiting testMe execution context
+Exiting global execution context
+```
+
+#### মনে রাখার নিয়ম
+
+> কোনো function call হলে caller context-এর next line execute হওয়ার আগে called function পুরো finish হবে।
+
+---
+
+### Visual 4: Stack + Heap Memory Diagram
+
+চতুর্থ screenshot-এ একই complex example দিয়ে stack ও heap memory দেখানো হয়েছে। এখানে মূল idea হলো: primitive value stack-এ directly থাকতে পারে, কিন্তু object/function-এর actual body heap-এ থাকে এবং stack-এ থাকে reference/address।
+
+#### Conceptual memory addresses
+
+| Identifier | Stack-এ কী থাকে | Heap-এ কী থাকে |
+|---|---|---|
+| `a` | `5` | কিছু না, কারণ primitive |
+| `testMe` | `XA01` reference | `XA01 → function testMe body` |
+| `b` | `10` | কিছু না, কারণ primitive |
+| `user` | `ZB01` reference | `ZB01 → { name: 'tapas', country: 'India' }` |
+| `testAgain` | `YB01` reference | `YB01 → function testAgain body` |
+
+#### Stack + Heap diagram
+
+```text
+STACK                                  HEAP
+
+┌──────────────────────────┐           ┌──────────────────────────────┐
+│ testAgain FEC            │           │ XA01                         │
+│                          │           │ function testMe() { ... }    │
+├──────────────────────────┤           ├──────────────────────────────┤
+│ testMe FEC               │           │ YB01                         │
+│ b: 10                    │           │ function testAgain() { ... } │
+│ user: ZB01 ──────────────┼──────────>├──────────────────────────────┤
+│ testAgain: YB01 ─────────┼──────────>│ ZB01                         │
+├──────────────────────────┤           │ { name: 'tapas',             │
+│ GEC                      │           │   country: 'India' }         │
+│ a: 5                     │           └──────────────────────────────┘
+│ testMe: XA01 ────────────┼──────────>
+└──────────────────────────┘
+```
+
+#### Function execution শেষ হলে কী হয়?
+
+```text
+1. testAgain() finish → testAgain FEC stack থেকে pop
+2. testMe() resume → শেষ console.log execute
+3. testMe() finish → testMe FEC stack থেকে pop
+4. GEC resume → final console.log execute
+5. GEC finish → stack empty
+```
+
+#### Garbage Collection connection
+
+যখন কোনো function execution শেষ হয়, তার local variables stack থেকে clear হয়ে যায়। যদি কোনো heap object/function আর কোনো reachable reference দ্বারা point না হয়, তাহলে সেটি garbage collection-এর candidate হতে পারে।
+
+Example:
+
+```text
+testMe FEC pop হওয়ার পর:
+- b আর নেই
+- user reference আর নেই
+- testAgain reference আর নেই
+
+যদি heap-এর ZB01 object-কে আর কেউ reference না করে,
+Garbage Collector পরে সেটি clean করতে পারে।
+```
+
+---
+
+### Visual Flow একসাথে মনে রাখার Shortcut
+
+```text
+Code load
+  ↓
+GEC create
+  ↓
+GEC CP: global var → undefined, function → memory
+  ↓
+GEC EP: line by line execution
+  ↓
+Function call found
+  ↓
+New FEC create and push to call stack
+  ↓
+FEC CP: local var → undefined, inner function → memory
+  ↓
+FEC EP: function body line by line execute
+  ↓
+Inner function call found? repeat same process
+  ↓
+Function finish → FEC pop
+  ↓
+Caller context resume
+  ↓
+All execution complete → stack empty
+```
+
+### Screenshot-based Common Mistakes
+
+| Mistake | Correct understanding |
+|---|---|
+| `function` define করলেই function execute হবে | Function execute হয় শুধু call করলে, যেমন `tom()` |
+| Creation Phase-এ actual value assign হয় | Creation Phase-এ `var` সাধারণত `undefined`, function body memory-তে যায় |
+| Object variable-এ actual object থাকে | Object heap-এ থাকে, variable-এ reference থাকে |
+| Function call শেষ হওয়ার আগেই caller-এর next line চলে | Function finish না হওয়া পর্যন্ত caller context pause থাকে |
+| Stack FIFO ভাবে কাজ করে | Call Stack LIFO ভাবে কাজ করে |
+| Garbage Collector সব memory সাথে সাথে clean করে | Cleanup engine-এর timing অনুযায়ী হয়; conceptually unreachable memory collectable |
 
 ---
 
