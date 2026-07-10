@@ -1,528 +1,611 @@
-# Git ও GitHub: Beginner থেকে Practical Collaboration — বিস্তারিত বাংলা Study Notes
+# Git ও GitHub: Beginner-Friendly Complete Study Note
 
-## Overview
-
-Git ও GitHub modern software development-এর মৌলিক tools। Git একটি **distributed version control system**—এটি file ও source code-এর পরিবর্তনের history সংরক্ষণ করে, নির্দিষ্ট version-এ ফিরে যেতে সাহায্য করে এবং একই project-এ একাধিক developer-এর কাজকে সংগঠিত করে। GitHub একটি cloud-based platform, যেখানে Git repository remoteভাবে রাখা, share করা, review করা এবং collaborate করা যায়।
-
-এই lesson-এ local Git workflow থেকে শুরু করে GitHub repository তৈরি, branch ও merge, merge conflict, stash, `.gitignore`, remote repository, push, pull request, fork, clone, HTTPS/SSH authentication এবং multiple GitHub account ব্যবস্থাপনা পর্যন্ত শেখানো হয়েছে। Transcript-এর command spelling ও কিছু technical statement পরিষ্কার ও সংশোধিত form-এ উপস্থাপন করা হয়েছে।
-
-> **গুরুত্বপূর্ণ সংশোধন:** Transcript-এ কয়েক জায়গায় `git reset --hard`-কে “revert” বলা হয়েছে। বাস্তবে `reset` history pointer সরায়; `git revert` আলাদা command, যা পুরোনো commit বাতিল করতে নতুন commit তৈরি করে। বিস্তারিত warning section-এ আছে।
-
----
-
-## Prerequisites
-
-- File ও folder সম্পর্কে basic ধারণা
-- Terminal/command line-এর basic usage
-- Windows, macOS বা Linux-এর সাধারণ ব্যবহার
-- একটি text editor, যেমন VS Code, Notepad++ বা Vim
-- Git installed থাকা
-- GitHub অংশ practice করার জন্য একটি GitHub account
+> এই note-টি প্রদত্ত tutorial transcript অনুসরণ করে তৈরি। ভিডিও না দেখেও যেন lesson বোঝা, revision করা, interview preparation নেওয়া এবং practical কাজ করা যায়—সে অনুযায়ী concepts, commands, examples, warnings, tips ও assignments সাজানো হয়েছে।
 
 ---
 
 ## Table of Contents
 
-1. [Main Concepts](#main-concepts)
-2. [Git ও Version Control](#1-git-ও-version-control)
-3. [Working Directory, Staging Area ও Repository](#2-working-directory-staging-area-ও-repository)
-4. [Git Installation ও Configuration](#3-git-installation-ও-configuration)
-5. [Repository Initialize ও Status দেখা](#4-repository-initialize-ও-status-দেখা)
-6. [File Stage ও Commit করা](#5-file-stage-ও-commit-করা)
-7. [Commit History, HEAD, Reset ও Reflog](#6-commit-history-head-reset-ও-reflog)
-8. [Tracked File Remove করা](#7-tracked-file-remove-করা)
-9. [Branch তৈরি, Switch, Merge, Rename ও Delete](#8-branch-তৈরি-switch-merge-rename-ও-delete)
-10. [Merge Conflict](#9-merge-conflict)
-11. [Git Stash](#10-git-stash)
-12. [`.gitignore`](#11-gitignore)
-13. [GitHub ও Remote Repository](#12-github-ও-remote-repository)
-14. [Local Repository GitHub-এ Push](#13-local-repository-github-এ-push)
-15. [Pull Request](#14-pull-request)
-16. [Fork](#15-fork)
-17. [Clone ও HTTPS Authentication](#16-clone-ও-https-authentication)
-18. [SSH Authentication](#17-ssh-authentication)
-19. [Multiple GitHub Accounts](#18-multiple-github-accounts)
-20. [Important Commands Summary Table](#important-commands-summary-table)
-21. [Git Workflow Summary](#git-workflow-summary)
-22. [Common Errors ও Troubleshooting](#common-errors-ও-troubleshooting)
-23. [Dangerous Commands ও Warnings](#dangerous-commands-ও-warnings)
-24. [Practical Assignments](#practical-assignments)
-25. [Quick Revision](#quick-revision)
-26. [Interview/Exam Questions](#interviewexam-questions-with-short-answers)
-27. [Key Takeaways](#key-takeaways)
+1. [Git কেন দরকার](#1-git-কেন-দরকার)
+2. [Version Control কী](#2-version-control-কী)
+3. [Working Directory, Staging Area, Local ও Remote Repository](#3-working-directory-staging-area-local-ও-remote-repository)
+4. [Git installation ও initial configuration](#4-git-installation-ও-initial-configuration)
+5. [প্রথম Local repository তৈরি](#5-প্রথম-local-repository-তৈরি)
+6. [Git-এর file lifecycle](#6-git-এর-file-lifecycle)
+7. [Stage ও commit](#7-stage-ও-commit)
+8. [History: log, HEAD ও reflog](#8-history-log-head-ও-reflog)
+9. [পুরোনো commit-এ যাওয়া ও reset](#9-পুরোনো-commit-এ-যাওয়া-ও-reset)
+10. [File remove ও untrack](#10-file-remove-ও-untrack)
+11. [Branching](#11-branching)
+12. [Merge ও fast-forward](#12-merge-ও-fast-forward)
+13. [Merge conflict](#13-merge-conflict)
+14. [Stash](#14-stash)
+15. [.gitignore](#15-gitignore)
+16. [GitHub ও Remote repository](#16-github-ও-remote-repository)
+17. [Remote add, push ও pull](#17-remote-add-push-ও-pull)
+18. [Pull Request workflow](#18-pull-request-workflow)
+19. [Fork ও open-source contribution](#19-fork-ও-open-source-contribution)
+20. [Clone](#20-clone)
+21. [HTTPS authentication](#21-https-authentication)
+22. [SSH authentication](#22-ssh-authentication)
+23. [Multiple GitHub account management](#23-multiple-github-account-management)
+24. [README best practices](#24-readme-best-practices)
+25. [Command cheat sheet](#25-command-cheat-sheet)
+26. [Common mistakes ও safety warnings](#26-common-mistakes-ও-safety-warnings)
+27. [Interview revision](#27-interview-revision)
+28. [Practical assignments](#28-practical-assignments)
 
 ---
 
-## Main Concepts
+# 1. Git কেন দরকার
 
-- Git ও version control
-- Working directory
-- Local repository ও `.git` directory
-- Staging area/index
-- Tracked, untracked ও modified file
-- Commit ও meaningful commit message
-- Commit history, commit ID ও `HEAD`
-- `git log`, `git reflog`, `git reset`
-- Branch, switch, merge ও fast-forward merge
-- Merge conflict resolution
-- Stash
-- `.gitignore`
-- GitHub ও remote repository
-- `origin`, push ও upstream tracking
-- Pull request
-- Fork ও clone
-- HTTPS ও SSH authentication
-- Multiple GitHub account configuration
+Software project-এ একটি file বারবার পরিবর্তিত হয়। একা কাজ করলে আগের অবস্থায় ফিরে যাওয়া দরকার হতে পারে; team-এ কাজ করলে আরও জানতে হয়:
+
+- কে কোন পরিবর্তন করেছে?
+- কখন করেছে?
+- কেন করেছে?
+- কোন পরিবর্তন production-ready?
+- ভুল change হলে আগের অবস্থায় কীভাবে ফেরা যাবে?
+- একই source code-এ একাধিক developer কীভাবে স্বাধীনভাবে কাজ করবে?
+
+Git এই সমস্যাগুলো সমাধান করে। এটি একটি **distributed version control system**। Git file-এর প্রতিটি save নিজে থেকে version বানায় না; developer যখন change-কে `commit` করে, তখন Git একটি version snapshot হিসেবে সেটি history-তে সংরক্ষণ করে।
+
+## Git-এর প্রধান সুবিধা
+
+| সুবিধা | ব্যাখ্যা |
+|---|---|
+| History | project-এর পরিবর্তনের ধারাবাহিক record থাকে |
+| Rollback | আগের commit বা অবস্থায় ফেরা যায় |
+| Comparison | দুই version-এর পার্থক্য দেখা যায় |
+| Collaboration | একাধিক developer একই project-এ কাজ করতে পারে |
+| Branching | মূল code ক্ষতিগ্রস্ত না করে নতুন feature তৈরি করা যায় |
+| Accountability | author, date, commit message ও change জানা যায় |
+| Backup/Sharing | GitHub-এর মতো Remote-এ code রাখা যায় |
 
 ---
 
-# Detailed Explanation
+# 2. Version Control কী
 
-## 1. Git ও Version Control
+Version Control হলো file ও folder-এর বিভিন্ন version track, compare এবং manage করার পদ্ধতি।
 
-### Concept কী?
+ধরা যাক একটি `README.md` file-এর তিনটি অবস্থা:
 
-Git একটি distributed version control system। এটি project-এর file পরিবর্তনের snapshot বা commit history সংরক্ষণ করে। প্রতিটি meaningful অবস্থাকে commit হিসেবে record করা যায়।
+1. প্রথমে file তৈরি করা হলো।
+2. পরে project description যোগ করা হলো।
+3. এরপর installation instruction যোগ করা হলো।
 
-### কেন দরকার?
+Git ব্যবহার করলে প্রতিটি অর্থপূর্ণ অবস্থাকে আলাদা `commit` হিসেবে রাখা যায়। পরে প্রয়োজন হলে দেখা যায়:
 
-- ভুল change করলে আগের অবস্থায় ফেরা
-- কে, কখন, কী change করেছে জানা
-- একই project-এ team collaboration
-- feature development আলাদা branch-এ করা
-- code history ও experiment নিরাপদ রাখা
+- দ্বিতীয় version-এ কী ছিল;
+- দ্বিতীয় ও তৃতীয় version-এর পার্থক্য কী;
+- তৃতীয় version ভুল হলে দ্বিতীয় version-এ কীভাবে ফেরা যায়।
 
-### কীভাবে কাজ করে?
+> গুরুত্বপূর্ণ: Git মূলত পরিবর্তনের **snapshot/history** manage করে। শুধু file copy করে `final`, `final-2`, `final-last` নাম রাখা version control-এর নির্ভরযোগ্য বিকল্প নয়।
+
+---
+
+# 3. Working Directory, Staging Area, Local ও Remote Repository
+
+Git বুঝতে চারটি area পরিষ্কারভাবে জানা দরকার।
+
+## 3.1 Working Directory
+
+আপনার computer-এ যে project folder-এর files সরাসরি edit করছেন সেটিই **Working Directory** বা **Working Tree**।
+
+উদাহরণ:
 
 ```text
-File পরিবর্তন
-    ↓
-Git change শনাক্ত করে
-    ↓
-Selected change staging area-তে যায়
-    ↓
-Commit করলে local history-তে snapshot তৈরি হয়
-    ↓
-Push করলে remote repository-তে যায়
+my-project/
+├── README.md
+├── index.html
+└── src/
 ```
 
-### Practical example
+## 3.2 Staging Area
 
-ধরা যাক `README.md`-এ প্রথমে project title লিখলেন, পরে installation guide যোগ করলেন। Git ব্যবহার করলে এই দুটি state আলাদা commit হিসেবে থাকবে। Installation guide ভুল হলে আগের commit inspect বা restore করা যাবে।
+`git add` করার পর change যে মধ্যবর্তী area-তে যায় সেটি **Staging Area** বা **Index**। এখানে আপনি পরবর্তী commit-এ কোন changes যাবে তা নির্বাচন করেন।
 
-### Common mistakes
+Staging Area-কে “পরবর্তী commit-এর প্রস্তুত তালিকা” হিসেবে ভাবা যায়।
 
-- Git এবং GitHub-কে একই জিনিস মনে করা
-- প্রতিটি save-কে commit ভাবা
-- commit না করে Git history তৈরি হয়েছে ধরে নেওয়া
+## 3.3 Local repository
 
-### Best practices
+`git init` করলে project-এর ভিতরে hidden `.git` directory তৈরি হয়। এই `.git` directory-তেই Git metadata, commit history, branch reference, configuration ইত্যাদি রাখে। এটিই project-এর **Local repository**-র মূল database।
 
-- ছোট ও logical change commit করুন
-- clear commit message লিখুন
-- sensitive file কখনো commit করবেন না
-- destructive command চালানোর আগে status ও log দেখুন
+## 3.4 Remote repository
 
-### মনে রাখার নিয়ম
+GitHub-এর মতো server-এ রাখা repository হলো **Remote repository**। Team member-রা Remote থেকে code `clone` বা `pull` করে এবং নিজেদের change `push` করে।
 
-> Git history রাখে; GitHub সেই history remote-এ host ও share করে।
-
----
-
-## 2. Working Directory, Staging Area ও Repository
-
-### Working Directory
-
-যে project folder-এর file সরাসরি edit করছেন সেটিই working directory বা working tree।
-
-### Staging Area
-
-পরবর্তী commit-এ কোন change যাবে তার selection area। `git add` change-কে staging area-তে নেয়। একে index-ও বলা হয়।
-
-### Local Repository
-
-`.git` directory-এর মধ্যে commit history, branch reference, configuration ও internal metadata সংরক্ষিত থাকে। `git init` চালালে এটি তৈরি হয়।
-
-### Remote Repository
-
-GitHub-এর মতো server-এ থাকা repository। Team memberরা network-এর মাধ্যমে push, fetch, pull বা clone করতে পারে।
+## Flow
 
 ```text
 Working Directory
+      │
       │ git add
       ▼
 Staging Area
+      │
       │ git commit
       ▼
 Local Repository
+      │
       │ git push
       ▼
-Remote Repository
+Remote Repository (GitHub)
 ```
 
-### গুরুত্বপূর্ণ clarification
+Remote থেকে Local-এ:
 
-Transcript-এ একটি local repository দিয়ে “তিনটি working directory track” করার মতো analogy আছে। সাধারণ beginner workflow-তে একটি `.git` repository তার root directory এবং তার subdirectories-এর file track করে। আলাদা unrelated folder একই repository-এর অংশ নয়, যদি না বিশেষ worktree/submodule arrangement ব্যবহার করা হয়।
-
-> এখানে transcript থেকে অনুমান করে ব্যাখ্যা করা হয়েছে।
+```text
+Remote Repository
+      │
+      │ git pull / git fetch
+      ▼
+Local Repository + Working Directory
+```
 
 ---
 
-## 3. Git Installation ও Configuration
+# 4. Git installation ও initial configuration
 
-### Installation
+## 4.1 Installation overview
 
-Official Git website থেকে operating system অনুযায়ী installer ব্যবহার করা যায়। Windows-এ Git Bash, Git Credential Manager, default branch name ও line-ending configuration পাওয়া যায়।
+Transcript-এ Windows installation দেখানো হয়েছে। সাধারণ flow:
 
-### Line ending: LF বনাম CRLF
+1. Git-এর official installer download করুন।
+2. আপনার OS অনুযায়ী 64-bit বা 32-bit installer নিন।
+3. Default components সাধারণত রাখা যায়।
+4. Initial branch name হিসেবে `main` নির্বাচন করা ভালো।
+5. Windows line-ending conversion-এর recommended option রাখা যায়।
+6. Git Credential Manager ও filesystem caching enable রাখা যায়।
+7. Installation শেষে Git Bash চালু করুন।
 
-- Linux/macOS: সাধারণত `LF` (`\n`)
-- Windows: সাধারণত `CRLF` (`\r\n`)
+> Installer-এর option Git version অনুযায়ী বদলাতে পারে। Option না বুঝলে recommended/default selection সাধারণত নিরাপদ।
 
-Windows-এর common configuration:
+## 4.2 LF ও CRLF
 
-```bash
-git config --global core.autocrlf true
-```
+Text file-এ line break platform অনুযায়ী ভিন্ন হতে পারে:
 
-এতে checkout-এর সময় LF → CRLF এবং commit-এর সময় CRLF → LF conversion হতে পারে। তবে team project-এ `.gitattributes` ব্যবহার করা আরও predictable।
+| Platform | সাধারণ line ending |
+|---|---|
+| Linux/macOS | `LF` (`\n`) |
+| Windows | `CRLF` (`\r\n`) |
 
-### Configuration list দেখা
+Windows installer-এ automatic conversion enable করলে সাধারণত `core.autocrlf=true` সেট হয়। এতে checkout-এর সময় LF → CRLF এবং commit-এর সময় CRLF → LF conversion হতে পারে।
+
+Configuration দেখুন:
 
 ```bash
 git config --list
 ```
 
-**কাজ:** active Git configuration দেখায়।
+**কাজ:** Git-এর effective configuration list দেখায়।
 
-**Expected output example:**
+**সম্ভাব্য output:**
 
 ```text
-user.name=Rahim Ahmed
-user.email=rahim@example.com
 core.autocrlf=true
 init.defaultbranch=main
+user.name=Your Name
+user.email=you@example.com
 ```
 
-### User name ও email set করা
+## 4.3 User identity configure করা
 
 ```bash
-git config --global user.name "Rahim Ahmed"
-git config --global user.email "rahim@example.com"
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
 ```
 
-**Syntax breakdown:**
+### Syntax
 
-- `git config`: configuration command
-- `--global`: current user-এর সব repository-তে প্রয়োগ
-- `user.name`: commit author name
-- `user.email`: commit author email
+```text
+git config --global <key> <value>
+```
 
-### Verify করা
+### কাজ
+
+- `user.name`: commit author-এর display name
+- `user.email`: commit author-এর email
+- `--global`: computer-এর সব repository-র default configuration
+
+Verify:
 
 ```bash
-git config --global user.name
-git config --global user.email
+git config --global --list
 ```
 
-### Common mistakes
-
-- GitHub username-কে `user.name`-এ বাধ্যতামূলক মনে করা
-- quotation ছাড়া space-সহ full name লেখা
-- personal project-এ office email ব্যবহার করা
-
-### Best practice
-
-Global identity-এর পাশাপাশি প্রয়োজন হলে repository-specific identity ব্যবহার করুন:
+একটি নির্দিষ্ট repository-তে আলাদা identity চাইলে সেই repository-র ভিতরে `--global` বাদ দিয়ে দিন:
 
 ```bash
 git config user.name "Work Name"
 git config user.email "work@example.com"
 ```
 
-এখানে `--global` নেই, তাই current repository-তেই প্রয়োগ হবে।
+> `user.name` GitHub username হওয়া বাধ্যতামূলক নয়। তবে GitHub account-এ verified email ব্যবহার করলে commit account-এর সঙ্গে সঠিকভাবে associate হওয়ার সম্ভাবনা বেশি।
 
 ---
 
-## 4. Repository Initialize ও Status দেখা
+# 5. প্রথম Local repository তৈরি
 
-### `git init`
-
-```bash
-git init
-```
-
-**কাজ:** current directory-কে Git repository বানায় এবং hidden `.git` folder তৈরি করে।
-
-**Expected output:**
-
-```text
-Initialized empty Git repository in .../.git/
-```
-
-### Hidden file দেখা
-
-Git Bash/Linux/macOS:
+ধরা যাক project folder:
 
 ```bash
-ls -a
+mkdir git-github-lessons
+cd git-github-lessons
 ```
 
-Windows PowerShell:
+বর্তমান directory দেখুন:
 
-```powershell
-Get-ChildItem -Force
+```bash
+pwd
 ```
 
-### `git status`
+**কাজ:** Present Working Directory-এর absolute path দেখায়।
+
+একটি file তৈরি করুন:
+
+```bash
+touch README.md
+```
+
+Windows Command Prompt-এ `touch` না থাকলে file explorer, editor, PowerShell বা Git Bash ব্যবহার করা যায়।
+
+Git initialize করার আগে:
 
 ```bash
 git status
 ```
 
-**কাজ:** current branch, staged, unstaged ও untracked file দেখায়।
-
-Repository initialize করার আগে output হতে পারে:
+সম্ভাব্য error:
 
 ```text
 fatal: not a git repository (or any of the parent directories): .git
 ```
 
-Initialize করার পর untracked file থাকলে:
+অর্থ: directory এখনো Git repository নয়।
 
-```text
-On branch main
-No commits yet
-Untracked files:
-  README.md
+Initialize করুন:
+
+```bash
+git init
 ```
 
-### Status categories
+সম্ভাব্য output:
 
-| অবস্থা | অর্থ |
-|---|---|
-| Untracked | Git file-টি এখনও track করছে না |
-| Tracked | file আগে add/commit হয়েছে |
-| Modified | tracked file change হয়েছে |
-| Staged | next commit-এর জন্য selected |
-| Clean | commit করার মতো pending change নেই |
+```text
+Initialized empty Git repository in .../.git/
+```
 
-### Best practice
+এখন hidden file-সহ list দেখুন:
 
-প্রায় প্রতিটি গুরুত্বপূর্ণ command-এর আগে ও পরে `git status` দেখুন।
+```bash
+ls -a
+```
+
+Output-এ `.git` পাওয়া যাবে।
+
+> `.git` delete করলে repository-র Git history, branch ও metadata হারিয়ে যাবে, যদিও Working Directory-এর সাধারণ files থাকতে পারে।
 
 ---
 
-## 5. File Stage ও Commit করা
+# 6. Git-এর file lifecycle
 
-### Specific file stage
+একটি file নিচের state-গুলোর মধ্যে থাকতে পারে:
+
+| State | অর্থ |
+|---|---|
+| Untracked | Git file-টিকে history-র অংশ হিসেবে track করছে না |
+| Tracked, unmodified | file track করা হচ্ছে এবং latest commit-এর পর change নেই |
+| Modified | tracked file পরিবর্তিত হয়েছে কিন্তু stage করা হয়নি |
+| Staged | change পরবর্তী commit-এর জন্য নির্বাচিত |
+| Committed | change Local repository history-তে সংরক্ষিত |
+| Ignored | `.gitignore` rule-এর কারণে Git সাধারণত file-টি track করবে না |
+
+State জানার সবচেয়ে দরকারি command:
+
+```bash
+git status
+```
+
+Compact output চাইলে:
+
+```bash
+git status --short
+```
+
+সম্ভাব্য short codes:
+
+```text
+?? new-file.md     # untracked
+ M README.md       # modified, unstaged
+M  README.md       # staged modification
+A  help.md         # staged new file
+D  old.md          # staged deletion
+```
+
+---
+
+# 7. Stage ও commit
+
+## 7.1 নির্দিষ্ট file stage করা
 
 ```bash
 git add README.md
 ```
 
-### Current directory-এর সব change stage
+**কাজ:** `README.md`-এর বর্তমান change Staging Area-তে যোগ করে।
+
+একাধিক file:
+
+```bash
+git add README.md help.md
+```
+
+## 7.2 Current directory-এর changes stage করা
 
 ```bash
 git add .
 ```
 
-### Repository-এর সব change stage
+**কাজ:** current directory ও তার subdirectory-র relevant changes stage করে।
+
+## 7.3 Repository-wide সব changes stage করা
 
 ```bash
 git add --all
 ```
 
-`git add .` current path থেকে নিচের changes stage করে। Repository root-এ চালালে সাধারণত সব change stage হয়। `git add --all` repository-wide additions, modifications ও deletions stage করে।
-
-### Commit
+Short form:
 
 ```bash
-git commit -m "Add initial README"
+git add -A
 ```
 
-**কাজ:** staging area-এর snapshot local repository history-তে save করে।
+এটি additions, modifications ও deletions stage করে।
 
-**Expected output example:**
+> `git add .` কোন directory থেকে চালানো হচ্ছে তা গুরুত্বপূর্ণ। Repository root থেকে চালালে সাধারণত পুরো project-এর changes stage হয়। Beginner হিসেবে `git status` দেখে তারপর `git add` ব্যবহার করুন।
+
+## 7.4 Commit করা
+
+```bash
+git commit -m "Add initial README file"
+```
+
+### Syntax
 
 ```text
-[main a1b2c3d] Add initial README
- 1 file changed, 5 insertions(+)
+git commit -m "<meaningful message>"
+```
+
+### কাজ
+
+Staging Area-র snapshot Local repository history-তে সংরক্ষণ করে।
+
+সম্ভাব্য output:
+
+```text
+[main (root-commit) a1b2c3d] Add initial README file
+ 1 file changed, 0 insertions(+), 0 deletions(-)
  create mode 100644 README.md
 ```
 
-### Meaningful commit message
+## 7.5 ভালো commit message
 
-ভালো message:
-
-```text
-Add installation instructions to README
-Fix login form validation
-Remove unused help file
-```
-
-দুর্বল message:
+খারাপ:
 
 ```text
 fix
 update
 changes
-final final
+final
 ```
 
-### Atomic commit
-
-একটি commit-এ একটি logical কাজ রাখুন। README update এবং unrelated file creation একই commit-এ রাখলে পরে শুধু একটি change undo করা কঠিন হতে পারে—transcript-এর example এই বিষয়টি দেখায়।
-
-### Suggested message style
-
-Imperative form:
+ভালো:
 
 ```text
-Add user authentication
-Update README usage section
-Fix branch switching error
+Add installation instructions to README
+Fix validation for empty email input
+Remove unused help documentation
 ```
 
-### Common mistakes
+### Recommended principle
 
-- `git add` না করে commit করা
-- unrelated changes এক commit-এ রাখা
-- secret/API key commit করা
-- message অস্পষ্ট রাখা
+Commit message দেখে যেন বোঝা যায় change-টি **কী করেছে** এবং প্রয়োজনে **কেন করেছে**। সাধারণত imperative style ব্যবহার করা হয়:
+
+```text
+Add ...
+Fix ...
+Remove ...
+Update ...
+Refactor ...
+```
+
+## 7.6 Atomic commit
+
+একটি commit ideally একটি logical কাজ করবে।
+
+খারাপ grouping:
+
+- README পরিবর্তন
+- unrelated bug fix
+- নতুন image
+- dependency update
+
+সব এক commit-এ।
+
+ভালো grouping:
+
+```text
+Commit 1: Update README introduction
+Commit 2: Add help document
+Commit 3: Fix login validation
+```
+
+এতে নির্দিষ্ট change revert বা review করা সহজ হয়। Transcript-এর উদাহরণে README modification ও নতুন help file এক commit-এ থাকায় একটি change ফিরাতে গিয়ে দুটিই প্রভাবিত হয়েছিল।
 
 ---
 
-## 6. Commit History, HEAD, Reset ও Reflog
+# 8. History: log, HEAD ও reflog
 
-### `git log`
+## 8.1 Full commit history
 
 ```bash
 git log
 ```
 
-Commit ID, author, date ও message দেখায়।
+সাধারণত দেখায়:
 
-### Compact history
+- full commit hash
+- author
+- date
+- commit message
+
+## 8.2 One-line history
 
 ```bash
 git log --oneline
 ```
 
-Example:
+সম্ভাব্য output:
 
 ```text
-8fa21d1 Add help file
-39ce182 Add initial README
+7f8e9a1 (HEAD -> main) Add help file
+3a2b1c0 Add initial README file
 ```
 
-### `HEAD` কী?
+> Transcript-এ speech recognition-এর কারণে “git log one line” শোনা গেলেও সঠিক command হলো `git log --oneline`।  
+> **এখানে transcript থেকে অনুমান করে ব্যাখ্যা করা হয়েছে।**
 
-`HEAD` current checked-out commit/branch-এর symbolic pointer। সাধারণত current branch-এর latest commit-এ থাকে।
+## 8.3 HEAD কী
+
+`HEAD` বর্তমানে checked-out branch/commit-এর reference। সাধারণত:
 
 ```text
-main: A ── B ── C
-               ↑
-             HEAD
+HEAD -> main -> latest commit
 ```
 
-### `git reset --hard <commit>`
+অর্থ: আপনি `main` branch-এ আছেন এবং `HEAD` `main`-এর latest commit নির্দেশ করছে।
 
-```bash
-git reset --hard 39ce182
-```
-
-**কাজ:** current branch ও `HEAD`-কে target commit-এ সরায়; staging area ও working directory target commit-এর মতো করে।
-
-**Warning:** uncommitted changes মুছে যেতে পারে এবং later commits branch history থেকে অদৃশ্য হতে পারে। Shared branch-এ এটি অত্যন্ত ঝুঁকিপূর্ণ।
-
-### `git reflog`
+## 8.4 Reflog
 
 ```bash
 git reflog
 ```
 
-Local repository-তে `HEAD` কোথায় কোথায় ছিল তার reference log দেখায়। ভুল reset-এর পরে হারানো commit ID খুঁজতে কাজে লাগে।
+`git log` reachable commit history দেখায়; `git reflog` Local repository-তে `HEAD` ও references কোথায় কোথায় move করেছে তার log দেখায়। Reset-এর পর `git log`-এ হারিয়ে যাওয়া commit hash অনেক সময় reflog থেকে উদ্ধার করা যায়।
 
-Example:
+সম্ভাব্য output:
 
 ```text
-8fa21d1 HEAD@{0}: reset: moving to 8fa21d1
-39ce182 HEAD@{1}: reset: moving to 39ce182
-8fa21d1 HEAD@{2}: commit: Add help file
-```
-
-### Lost commit recover
-
-```bash
-git reflog
-git reset --hard <recovered-commit-id>
-```
-
-আরও নিরাপদ recovery:
-
-```bash
-git branch recovery <recovered-commit-id>
-```
-
-এতে recovered commit-এ নতুন branch তৈরি হয়; current work না সরিয়েও commit বাঁচানো যায়।
-
-### `reset` বনাম `revert`
-
-| বিষয় | `git reset` | `git revert` |
-|---|---|---|
-| History | branch pointer সরায়/পুনর্লিখতে পারে | নতুন inverse commit তৈরি করে |
-| Shared branch | ঝুঁকিপূর্ণ | সাধারণত নিরাপদ |
-| Uncommitted work | `--hard` হলে হারাতে পারে | সাধারণত untouched |
-| Use case | local cleanup/recovery | published commit undo |
-
-Published commit বাতিল করতে:
-
-```bash
-git revert <commit-id>
+7f8e9a1 HEAD@{0}: reset: moving to 7f8e9a1
+3a2b1c0 HEAD@{1}: reset: moving to 3a2b1c0
+7f8e9a1 HEAD@{2}: commit: Add help file
 ```
 
 ---
 
-## 7. Tracked File Remove করা
+# 9. পুরোনো commit-এ যাওয়া ও reset
 
-### File delete ও stage করা
+Transcript-এ ব্যবহৃত command:
+
+```bash
+git reset --hard <commit-hash>
+```
+
+উদাহরণ:
+
+```bash
+git reset --hard 3a2b1c0
+```
+
+**কাজ:** current branch pointer, Staging Area এবং Working Directory—সব target commit-এর অবস্থায় নিয়ে যায়।
+
+সম্ভাব্য output:
+
+```text
+HEAD is now at 3a2b1c0 Add initial README file
+```
+
+## অত্যন্ত গুরুত্বপূর্ণ warning
+
+`git reset --hard` uncommitted changes permanently মুছে দিতে পারে। Command চালানোর আগে:
+
+```bash
+git status
+git stash
+```
+
+অথবা প্রয়োজনীয় কাজ commit করুন।
+
+Reset-এর আগে থাকা commit ফিরে পেতে:
+
+```bash
+git reflog
+git reset --hard <old-commit-hash>
+```
+
+## Safer alternatives
+
+Published/shared history undo করতে অনেক সময় `git revert` বেশি নিরাপদ:
+
+```bash
+git revert <commit-hash>
+```
+
+এটি পুরোনো history rewrite না করে inverse change-সহ নতুন commit তৈরি করে।
+
+> `reset` ও `revert` এক নয়। Interview-এ পার্থক্যটি প্রায়ই জিজ্ঞেস করা হয়।
+
+---
+
+# 10. File remove ও untrack
+
+## 10.1 Working Directory ও Git—দুই জায়গা থেকেই remove
 
 ```bash
 git rm help.md
 ```
 
-**কাজ:** working directory থেকে file delete করে এবং deletion stage করে। এরপর commit করতে হবে।
+এটি file delete করে এবং deletion stage করে। তারপর:
 
 ```bash
 git commit -m "Remove obsolete help file"
 ```
 
-### শুধু tracking বন্ধ, local file রাখা
+## 10.2 Git tracking থেকে remove, local file রেখে দেওয়া
 
 ```bash
-git rm --cached config.local
+git rm --cached abcd.md
 ```
 
-Folder-এর জন্য:
+**কাজ:** file Working Directory-তে থাকবে, কিন্তু Git index থেকে remove হবে। সাধারণত ইতিমধ্যে tracked secret/config/generated file ignore করতে ব্যবহৃত হয়।
+
+তারপর `.gitignore`-এ entry যোগ করুন:
+
+```gitignore
+abcd.md
+```
+
+এবং commit করুন:
+
+```bash
+git add .gitignore
+git commit -m "Stop tracking local abcd file"
+```
+
+Directory-এর ক্ষেত্রে:
 
 ```bash
 git rm -r --cached node_modules
 ```
 
-তারপর `.gitignore`-এ add ও commit করুন।
-
-### Common mistakes
-
-- `git rm` চালিয়ে file permanently হারানো
-- `--cached` ছাড়া local-only file remove করা
-- deletion commit না করা
-
 ---
 
-## 8. Branch তৈরি, Switch, Merge, Rename ও Delete
+# 11. Branching
 
-### Branch list
+Branch হলো commit-এর একটি movable reference। নতুন feature, bug fix বা experiment আলাদা branch-এ করলে `main` স্থিতিশীল রাখা যায়।
+
+## 11.1 Branch list
 
 ```bash
 git branch --list
@@ -534,652 +617,727 @@ Short form:
 git branch
 ```
 
-`*` current branch নির্দেশ করে।
-
-### Branch create
-
-```bash
-git branch feature/add-readme-text
-```
-
-### Branch switch
-
-```bash
-git switch feature/add-readme-text
-```
-
-### Create ও switch একসঙ্গে
-
-```bash
-git switch -c feature/add-readme-text
-```
-
-Older equivalent:
-
-```bash
-git checkout -b feature/add-readme-text
-```
-
-### Branch naming convention
+বর্তমান branch-এর আগে `*` থাকে:
 
 ```text
-feature/user-login
-fix/navbar-overflow
-docs/update-readme
-refactor/api-client
+* main
+  feature/add-heading-text
 ```
 
-### Merge
-
-যে branch-এ change আনতে চান, আগে সেই branch-এ যান:
+## 11.2 নতুন branch তৈরি
 
 ```bash
-git switch main
-git merge feature/add-readme-text
+git branch feature/add-heading-text
 ```
 
-### Fast-forward merge
+এটি branch তৈরি করে, কিন্তু switch করে না। Branch বর্তমান `HEAD` commit থেকে তৈরি হয়।
 
-যদি main branch feature branch তৈরির পর আর এগোয়নি, Git main pointer-কে feature-এর tip-এ সরিয়ে দেয়। Extra merge commit প্রয়োজন হয় না।
+## 11.3 Branch switch
+
+```bash
+git switch feature/add-heading-text
+```
+
+পুরোনো command:
+
+```bash
+git checkout feature/add-heading-text
+```
+
+## 11.4 Create + switch একসঙ্গে
+
+```bash
+git switch -c feature/add-heading-text
+```
+
+পুরোনো equivalent:
+
+```bash
+git checkout -b feature/add-heading-text
+```
+
+## 11.5 Naming convention
+
+Common examples:
 
 ```text
-Before:
-A──B  main
-   └──C──D  feature
-
-After fast-forward:
-A──B──C──D  main, feature
+feature/add-login-page
+bugfix/fix-empty-email
+hotfix/payment-timeout
+chore/update-dependencies
+docs/improve-readme
 ```
 
-### Branch rename
+Organization-এর convention অনুসরণ করা সবচেয়ে ভালো।
 
-Current branch rename:
+## 11.6 Branch rename
+
+বর্তমান branch rename:
 
 ```bash
-git branch -m feature/better-name
+git branch -m feature/add-heading-text
 ```
 
-Specific branch rename:
+অন্য branch rename:
 
 ```bash
 git branch -m old-name new-name
 ```
 
-### Safe delete
+## 11.7 Branch delete
+
+Safe delete:
 
 ```bash
-git branch -d feature/add-readme-text
+git branch -d feature/add-heading-text
 ```
 
-Merged না হলে Git সাধারণত delete করতে বাধা দেয়।
+`-d` unmerged branch delete করতে বাধা দেয়।
 
-### Force delete
+Force delete:
 
 ```bash
-git branch -D feature/add-readme-text
+git branch -D feature/add-heading-text
 ```
 
-**Warning:** unmerged commit হারানোর ঝুঁকি।
+> `-D` warning bypass করে। Unmerged work হারানোর ঝুঁকি আছে; নিশ্চিত না হলে ব্যবহার করবেন না।
 
 ---
 
-## 9. Merge Conflict
+# 12. Merge ও fast-forward
 
-### Conflict কেন হয়?
+ধরা যাক feature branch-এর কাজ `main`-এ আনতে হবে।
 
-দুটি branch একই file-এর একই বা overlapping line আলাদাভাবে modify করলে Git কোন version রাখবে তা নিজে সিদ্ধান্ত নিতে পারে না।
+প্রথমে target branch-এ যান:
 
-### Conflict তৈরি হওয়ার flow
-
-```text
-main:    "Created for demo"
-branch1: "Created for demos"
-branch2: "Created for practice"
+```bash
+git switch main
 ```
 
-Branch merge করলে conflict marker দেখা যায়:
+তারপর source branch merge করুন:
+
+```bash
+git merge feature/add-heading-text
+```
+
+মনে রাখার নিয়ম:
+
+> **যে branch-এর মধ্যে change আনতে চান, আগে সেই branch-এ switch করুন। তারপর যেখান থেকে আনবেন সেটির নাম দিয়ে `git merge` চালান।**
+
+## Fast-forward merge
+
+`main` থেকে feature branch তৈরি হওয়ার পর `main`-এ নতুন commit না হলে Git `main` pointer-কে feature branch-এর latest commit পর্যন্ত এগিয়ে দেয়। এটিই fast-forward merge।
+
+```text
+Before:
+A---B  main
+     \
+      C---D  feature
+
+After fast-forward:
+A---B---C---D  main, feature
+```
+
+এক্ষেত্রে আলাদা merge commit প্রয়োজন নাও হতে পারে।
+
+---
+
+# 13. Merge conflict
+
+## কখন conflict হয়
+
+Git সাধারণত আলাদা file বা আলাদা line-এর changes নিজে merge করতে পারে। একই file-এর একই অংশ দুই branch-এ ভিন্নভাবে edit হলে conflict হতে পারে।
+
+উদাহরণ:
+
+Branch A:
+
+```text
+README file created for demos.
+```
+
+Branch B:
+
+```text
+README file created for practice.
+```
+
+Merge করলে:
+
+```bash
+git merge feature/add-heading-text
+```
+
+সম্ভাব্য output:
+
+```text
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+## Conflict marker
 
 ```text
 <<<<<<< HEAD
-Created for practice
+README file created for practice.
 =======
-Created for demos
+README file created for demos.
 >>>>>>> feature/add-heading-text
 ```
 
-### Marker-এর অর্থ
+- `<<<<<<< HEAD` থেকে `=======` পর্যন্ত: current branch-এর content
+- `=======` থেকে `>>>>>>> branch-name` পর্যন্ত: incoming branch-এর content
 
-- `<<<<<<< HEAD` থেকে `=======`: current branch-এর content
-- `=======` থেকে `>>>>>>> branch`: incoming branch-এর content
-
-### Resolve করার ধাপ
+## Resolution steps
 
 1. Conflicted file খুলুন।
-2. কোন content রাখবেন সিদ্ধান্ত নিন।
-3. Conflict marker delete করুন।
-4. Final valid content save করুন।
-5. File stage করুন।
-6. Merge commit complete করুন।
+2. কোন version রাখবেন বা কীভাবে combine করবেন ঠিক করুন।
+3. Conflict markers সম্পূর্ণ remove করুন।
+4. File save করুন।
+5. Status দেখুন:
 
 ```bash
 git status
+```
+
+6. Resolved file stage করুন:
+
+```bash
 git add README.md
+```
+
+7. Merge commit complete করুন:
+
+```bash
 git commit
 ```
 
-Git prefilled merge message দিতে পারে। চাইলে save করে editor বন্ধ করুন।
+অথবা message দিন:
 
-### Merge abort
+```bash
+git commit -m "Resolve README merge conflict"
+```
 
-Resolution শুরু না করে আগের অবস্থায় ফিরে যেতে:
+## Merge abort
+
+Conflict resolution শুরু না করে merge বাতিল করতে:
 
 ```bash
 git merge --abort
 ```
 
-### Best practices
-
-- merge-এর আগে latest main branch নিন
-- ছোট branch ও ছোট commit রাখুন
-- conflict blindly accept করবেন না
-- application test করুন
-- conflict markers repository-তে commit হয়েছে কি না search করুন
-
 ---
 
-## 10. Git Stash
+# 14. Stash
 
-### Concept কী?
+`stash` unfinished, uncommitted tracked changes সাময়িকভাবে সরিয়ে clean Working Directory দেয়। জরুরি branch switch-এর সময় useful।
 
-Incomplete, uncommitted change সাময়িকভাবে সরিয়ে clean working directory তৈরি করে। জরুরি অন্য branch-এ যেতে কাজে লাগে।
-
-### Stash create
+## 14.1 Stash তৈরি
 
 ```bash
 git stash
 ```
 
-Better message:
+Meaningful message:
 
 ```bash
-git stash push -m "WIP: update README greeting"
+git stash push -m "WIP: update README introduction"
 ```
 
-### Stash list
+## 14.2 Stash list
 
 ```bash
 git stash list
 ```
 
-Example:
+Output:
 
 ```text
-stash@{0}: On main: WIP: update README greeting
+stash@{0}: On main: WIP: update README introduction
+stash@{1}: On feature/login: form validation work
 ```
 
-### Stash content দেখুন
+## 14.3 Stash content দেখা
+
+Summary:
+
+```bash
+git stash show stash@{0}
+```
+
+Patch/diff:
 
 ```bash
 git stash show -p stash@{0}
 ```
 
-### Latest stash apply ও remove
+> Transcript-এ command-টি অস্পষ্টভাবে উচ্চারিত হয়েছে; সঠিক syntax হলো `git stash show -p`।  
+> **এখানে transcript থেকে অনুমান করে ব্যাখ্যা করা হয়েছে।**
+
+## 14.4 Latest stash apply ও remove
 
 ```bash
 git stash pop
 ```
 
-### Specific stash apply, কিন্তু list-এ রাখা
+`pop` latest stash apply করে এবং সফল হলে stash list থেকে remove করে।
+
+## 14.5 নির্দিষ্ট stash apply
 
 ```bash
 git stash apply stash@{1}
 ```
 
-### Stash delete
+`apply` stash রেখে দেয়। পরে remove করতে:
 
 ```bash
-git stash drop stash@{0}
+git stash drop stash@{1}
 ```
 
-### Important nuance
+## Untracked file-সহ stash
 
-Default `git stash` untracked file অন্তর্ভুক্ত করে না। Untracked file-সহ stash:
+Default `git stash` সাধারণত untracked file নেয় না। প্রয়োজন হলে:
 
 ```bash
 git stash -u
 ```
 
-### Common mistakes
-
-- stash-কে permanent backup ভাবা
-- অনেক stash রেখে context ভুলে যাওয়া
-- `pop` conflict হলে stash apply হয়েছে কি না যাচাই না করা
-
 ---
 
-## 11. `.gitignore`
+# 15. .gitignore
 
-### Concept কী?
+`.gitignore`-এ এমন files/folders-এর pattern লেখা হয় যা Git সাধারণত track করবে না।
 
-`.gitignore` pattern অনুযায়ী untracked file/folder-কে Git status ও staging থেকে বাদ দেয়।
-
-### Common example
+Common example:
 
 ```gitignore
+# Dependencies
 node_modules/
+
+# Environment secrets
 .env
-*.log
+.env.local
+
+# Build output
 dist/
+build/
+
+# Logs
+*.log
+
+# OS/editor
 .DS_Store
+.vscode/
 ```
 
-### Create
+Create:
 
 ```bash
 touch .gitignore
 ```
 
-Windows PowerShell:
+তারপর `.gitignore` নিজে commit করতে হবে:
 
-```powershell
-New-Item .gitignore -ItemType File
+```bash
+git add .gitignore
+git commit -m "Add Git ignore rules"
 ```
 
-### Important rule
+## Already tracked file-এর ক্ষেত্রে
 
-`.gitignore` শুধু untracked file ignore করে। আগে commit করা file `.gitignore`-এ add করলেও Git track করা বন্ধ করবে না।
-
-### Already tracked file ignore করা
+শুধু `.gitignore`-এ নাম যোগ করলে previously committed file ignore হবে না। প্রথমে index থেকে remove করুন:
 
 ```bash
 git rm --cached abcd.md
 ```
 
-Folder:
+তারপর commit করুন।
 
-```bash
-git rm -r --cached node_modules
-```
+## কেন `node_modules/` commit করা হয় না
 
-তারপর:
-
-```bash
-git add .gitignore
-git commit -m "Stop tracking local files and update gitignore"
-```
-
-### Ignore rule পরীক্ষা
-
-```bash
-git check-ignore -v node_modules/package.json
-```
-
-### Common mistakes
-
-- `.env` commit করে পরে শুধু `.gitignore`-এ add করা
-- `.gitignore` file নিজে commit না করা
-- path pattern ভুল লেখা
-- generated folder Git-এ রাখা
-
-### Security warning
-
-Secret একবার remote-এ push হলে শুধু file delete করলেই নিরাপদ নয়; secret rotate করতে হবে এবং প্রয়োজনে history rewrite করতে হবে।
+- size অনেক বড়;
+- generated dependencies;
+- `package.json` ও lock file থেকে পুনরায় install করা যায়;
+- platform-specific files থাকতে পারে;
+- repository অপ্রয়োজনীয়ভাবে ভারী হয়।
 
 ---
 
-## 12. GitHub ও Remote Repository
+# 16. GitHub ও Remote repository
 
-### GitHub কী?
+Git এবং GitHub এক জিনিস নয়।
 
-Git repository host করার cloud platform। Repository sharing, collaboration, issue, pull request, review এবং access control দেয়।
+| Git | GitHub |
+|---|---|
+| Version control software | Git repository hosting platform |
+| Local computer-এ কাজ করতে পারে | Internet/cloud-based collaboration |
+| commit, branch, merge manage করে | Remote storage, Pull Request, review, issue, access control দেয় |
+| GitHub ছাড়াও ব্যবহারযোগ্য | Git repository ব্যবহার করে |
 
-### Git বনাম GitHub
+GitHub ছাড়াও GitLab, Bitbucket ইত্যাদি Remote hosting service রয়েছে।
 
-| বিষয় | Git | GitHub |
-|---|---|---|
-| ধরন | Version control system | Cloud hosting/collaboration platform |
-| কোথায় চলে | Local machine | Remote server/web |
-| মূল কাজ | History, branch, merge | Hosting, review, collaboration |
-| Internet দরকার | Local কাজের জন্য না | Remote operation-এর জন্য হ্যাঁ |
-| Alternative | Mercurial ইত্যাদি | GitLab, Bitbucket ইত্যাদি |
+## GitHub repository তৈরি
 
-### Repository create করার সময়
+সাধারণ steps:
 
-- Meaningful name
-- Clear description
-- Public/Private visibility
-- প্রয়োজনে README, `.gitignore`, license
+1. GitHub account তৈরি করুন।
+2. **New repository** নির্বাচন করুন।
+3. Meaningful repository name দিন।
+4. Description লিখুন।
+5. Public বা Private visibility নির্বাচন করুন।
+6. Repository create করুন।
 
 ### Public বনাম Private
 
-- **Public:** সবাই দেখতে পারে; write access আলাদা permission-এর বিষয়
-- **Private:** authorized user ছাড়া দেখা যায় না
+| Public | Private |
+|---|---|
+| যে কেউ দেখতে পারে | অনুমোদিত user ছাড়া দেখা যায় না |
+| portfolio/open-source-এর জন্য উপযোগী | private work, assignment বা company code-এর জন্য উপযোগী |
 
 ---
 
-## 13. Local Repository GitHub-এ Push
+# 17. Remote add, push ও pull
 
-### Remote add
-
-HTTPS:
+## 17.1 Local repository-কে GitHub Remote-এর সঙ্গে যুক্ত করা
 
 ```bash
-git remote add origin https://github.com/USERNAME/REPOSITORY.git
+git remote add origin git@github.com:username/repository.git
 ```
 
-SSH:
+HTTPS version:
 
 ```bash
-git remote add origin git@github.com:USERNAME/REPOSITORY.git
+git remote add origin https://github.com/username/repository.git
 ```
 
-**Breakdown:**
+### Syntax
 
-- `remote add`: নতুন remote reference
-- `origin`: conventional remote name
-- URL: GitHub repository address
+```text
+git remote add <remote-name> <remote-url>
+```
 
-### Remote verify
+`origin` একটি convention; বাধ্যতামূলক নাম নয়। এটি সাধারণত primary Remote-এর alias।
+
+Remote verify:
 
 ```bash
 git remote -v
 ```
 
-### Branch name main করা
+Output:
 
-```bash
-git branch -M main
+```text
+origin  git@github.com:username/repository.git (fetch)
+origin  git@github.com:username/repository.git (push)
 ```
 
-### First push
+## 17.2 প্রথম push
 
 ```bash
 git push -u origin main
 ```
 
-- `origin`: target remote
-- `main`: target branch
-- `-u`/`--set-upstream`: local main-এর upstream `origin/main` set করে
+### ব্যাখ্যা
 
-এরপর সাধারণত:
+- `git push`: Local commits Remote-এ পাঠায়
+- `origin`: Remote alias
+- `main`: branch name
+- `-u` / `--set-upstream`: Local `main`-কে `origin/main`-এর tracking branch হিসেবে সেট করে
+
+পরেরবার শুধু:
 
 ```bash
 git push
 ```
 
-### Complete existing-project flow
+## 17.3 Feature branch push
 
 ```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin <repository-url>
-git push -u origin main
+git push -u origin feature/fix-text
 ```
 
-### Remote URL ভুল হলে
+Remote-এ branch তৈরি হবে এবং Pull Request খোলা যাবে।
+
+## 17.4 Pull
 
 ```bash
-git remote set-url origin <new-url>
+git pull
 ```
+
+সাধারণভাবে `git pull` = `git fetch` + merge/rebase (configuration অনুযায়ী)। Current branch-এর configured upstream থেকে Remote changes এনে Local-এ integrate করে।
+
+Explicit:
+
+```bash
+git pull origin main
+```
+
+> Push-এর আগে team repository-তে latest changes pull করা conflict কমাতে সাহায্য করে। তবে uncommitted changes থাকলে আগে commit বা stash করুন।
+
+## 17.5 Fetch বনাম Pull
+
+| Command | কাজ |
+|---|---|
+| `git fetch` | Remote updates download করে; Working Directory বদলায় না |
+| `git pull` | updates download করে এবং current branch-এ integrate করে |
 
 ---
 
-## 14. Pull Request
+# 18. Pull Request workflow
 
-### Concept কী?
+Pull Request বা PR হলো একটি branch-এর changes অন্য branch-এ merge করার formal proposal। এটি GitHub feature; raw Git command নয়।
 
-Pull Request (PR) হলো একটি branch-এর change অন্য branch-এ merge করার formal proposal। এতে review, discussion, automated test ও approval করা যায়।
+## Typical workflow
 
-### Typical flow
+1. `main` থেকে feature branch তৈরি।
+2. Change, stage ও commit।
+3. Feature branch Remote-এ push।
+4. GitHub-এ **Compare & pull request** নির্বাচন।
+5. Base branch ও compare branch যাচাই।
+6. Meaningful title ও description লিখুন।
+7. Reviewer assign করুন।
+8. Reviewer files changed দেখবেন।
+9. Reviewer approve, comment বা request changes করতে পারেন।
+10. প্রয়োজনীয় update একই branch-এ push করলে PR স্বয়ংক্রিয়ভাবে update হয়।
+11. Approval শেষে merge।
+12. Feature branch প্রয়োজনে delete।
 
-```bash
-git switch -c feature/update-readme
-# file edit
-git add README.md
-git commit -m "Update README introduction"
-git push -u origin feature/update-readme
-```
-
-তারপর GitHub-এ:
-
-1. Compare & pull request
-2. Base branch: `main`
-3. Compare branch: `feature/update-readme`
-4. Title ও description লিখুন
-5. Create pull request
-6. Review/changes
-7. Merge pull request
-
-### Good PR description
-
-- কী change হয়েছে
-- কেন প্রয়োজন
-- কীভাবে test করা হয়েছে
-- screenshot/related issue
-
-### Common mistakes
-
-- base ও compare branch উল্টো নির্বাচন
-- বিশাল unrelated change এক PR-এ
-- test না করে PR করা
-- conflict resolve না করা
-
----
-
-## 15. Fork
-
-### Concept কী?
-
-অন্য user/organization-এর repository-এর server-side copy নিজের GitHub account-এ তৈরি করা। মূল repository-তে write permission না থাকলে open-source contribution-এ ব্যবহার করা হয়।
-
-### Fork বনাম Clone
-
-| বিষয় | Fork | Clone |
-|---|---|---|
-| কোথায় copy | GitHub account-এ | Local machine-এ |
-| উদ্দেশ্য | নিজের remote copy | Local development |
-| Command | সাধারণত GitHub UI | `git clone` |
-| Original repo link | GitHub maintain করে | remote config অনুযায়ী |
-
-### Fork workflow
+## Base এবং Compare
 
 ```text
-Original repository (upstream)
-        ↓ Fork
-Your GitHub repository (origin)
-        ↓ Clone
-Your local repository
+base: main
+compare: feature/fix-text
 ```
 
-### Upstream add
+অর্থ: `feature/fix-text`-এর changes `main`-এ নিতে চাই।
+
+## ভালো PR description
+
+```markdown
+## What changed
+- Updated README introduction
+- Added usage example
+
+## Why
+New users could not understand how to run the project.
+
+## Testing
+- Opened README preview
+- Verified all links
+```
+
+---
+
+# 19. Fork ও open-source contribution
+
+Fork হলো অন্য account-এর repository-র server-side copy নিজের GitHub account-এ তৈরি করা। Original repository-তে write permission না থাকলে এটি খুব useful।
+
+## Terminology
+
+- **Upstream repository:** original repository
+- **Forked repository:** আপনার account-এ তৈরি copy
+- **Origin:** Local clone-এর Remote alias; সাধারণত আপনার fork
+- **Pull Request:** fork-এর branch থেকে upstream repository-তে change প্রস্তাব
+
+## Fork workflow
+
+1. Original repository খুলুন।
+2. **Fork** click করুন।
+3. নিজের account-এ fork তৈরি করুন।
+4. Fork clone করুন।
+5. নতুন branch তৈরি করুন।
+6. Change, commit ও push করুন।
+7. Fork থেকে upstream-এ Pull Request খুলুন।
+8. Maintainer review ও merge করবেন।
+
+Recommended Local setup:
 
 ```bash
-git remote add upstream https://github.com/ORIGINAL-OWNER/REPO.git
+git clone git@github.com:your-username/project.git
+cd project
+git remote add upstream git@github.com:original-owner/project.git
 git remote -v
 ```
 
-### Upstream update নেওয়া
+Upstream sync:
 
 ```bash
 git fetch upstream
 git switch main
 git merge upstream/main
+git push origin main
 ```
 
-অথবা:
-
-```bash
-git pull upstream main
-```
-
-### Contribution flow
-
-1. Fork
-2. Clone নিজের fork
-3. Branch তৈরি
-4. Commit
-5. নিজের fork-এ push
-6. Original repository-তে PR
+> Transcript-এ fork-এর browser-based demonstration ছিল; এখানে practical Local workflow যোগ করা হয়েছে।  
+> **এখানে transcript থেকে অনুমান করে ব্যাখ্যা করা হয়েছে।**
 
 ---
 
-## 16. Clone ও HTTPS Authentication
+# 20. Clone
 
-### Clone
+Existing Remote repository-এর complete working copy ও Git history Local-এ আনতে:
 
 ```bash
-git clone https://github.com/USERNAME/REPOSITORY.git
+git clone <repository-url>
 ```
 
-**কাজ:** remote repository-এর files, full commit history ও default remote `origin`-সহ local copy তৈরি করে।
-
-### Specific folder name
+HTTPS:
 
 ```bash
-git clone <url> my-project
+git clone https://github.com/username/project.git
 ```
 
-### Clone-এর পর
+SSH:
 
 ```bash
-cd REPOSITORY
+git clone git@github.com:username/project.git
+```
+
+Custom folder name:
+
+```bash
+git clone https://github.com/username/project.git my-folder
+```
+
+Clone সাধারণত:
+
+- নতুন project directory তৈরি করে;
+- `.git` history download করে;
+- `origin` Remote configure করে;
+- default branch checkout করে।
+
+Verify:
+
+```bash
+cd project
 git remote -v
-git branch --all
-```
-
-### HTTPS authentication
-
-Modern GitHub password authentication for Git operations সমর্থন করে না। সাধারণ options:
-
-- Browser sign-in via Git Credential Manager
-- Personal Access Token (PAT)
-- SSH key
-
-### Personal Access Token warning
-
-Token password-এর মতো sensitive।
-
-- terminal history-তে paste করা এড়িয়ে চলুন
-- source code-এ লিখবেন না
-- minimum scope দিন
-- leak হলে revoke করুন
-
-### Basic edit-push workflow
-
-```bash
-git clone <https-url>
-cd <repository>
-# file create/edit
-git add .
-git commit -m "Add bio file"
-git push
+git status
 ```
 
 ---
 
-## 17. SSH Authentication
+# 21. HTTPS authentication
 
-### Concept কী?
+HTTPS Remote URL সহজ এবং firewall-friendly। Modern GitHub authentication-এ account password-এর বদলে browser authorization, Git Credential Manager বা Personal Access Token ব্যবহার করা হয়।
 
-SSH public/private key pair ব্যবহার করে password/token বারবার না দিয়ে secure authentication করা যায়।
+## Transcript-এর authentication options
 
-### Key pair
+- Sign in with browser
+- Sign in with a code
+- Personal Access Token (PAT)
 
-- **Private key:** local machine-এ গোপন থাকবে
-- **Public key:** GitHub account-এ add করা যায়
+## PAT-এর security rules
 
-### Recommended key generation
+- Minimum required permissions দিন—**least privilege**।
+- Expiration দিন।
+- Token কখনো source code, screenshot বা public note-এ প্রকাশ করবেন না।
+- Token leak হলে সঙ্গে সঙ্গে revoke করুন।
+- `.env` বা credential file commit করবেন না।
 
-Modern recommendation:
+> Transcript-এ “admin ছাড়া প্রায় সব permission” দেওয়ার ইঙ্গিত ছিল। বাস্তবে প্রয়োজনের অতিরিক্ত permission দেওয়া নিরাপদ নয়। শুধু কাজের জন্য দরকারি scope নির্বাচন করুন।
+
+Remote URL HTTPS-এ বদলাতে:
 
 ```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
+git remote set-url origin https://github.com/username/project.git
 ```
 
-পুরোনো system-এ RSA:
+---
+
+# 22. SSH authentication
+
+SSH-তে Local machine-এ private key থাকে এবং GitHub account-এ public key যোগ করা হয়। এতে password/PAT বারবার দিতে হয় না; passphrase থাকলে সেটি চাইতে পারে।
+
+## 22.1 Key pair তৈরি
+
+Transcript-এ RSA key দেখানো হয়েছে। Command-এর corrected form:
 
 ```bash
-ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+ssh-keygen -o -t rsa -C "you@example.com"
 ```
 
-Transcript-এ RSA-based command দেখানো হয়েছে। `-o` modern private-key format ব্যবহার করতে পারে, তবে current OpenSSH-এ এটি সাধারণত default।
+আরও common modern option:
 
-### Key save
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
 
-Default path সাধারণত:
+> RSA command-এর transcript অংশ speech-to-text-এ বিকৃত ছিল।  
+> **এখানে transcript থেকে অনুমান করে ব্যাখ্যা করা হয়েছে।**
+
+### Options
+
+- `-t`: key type
+- `-C`: comment, সাধারণত email
+- `-o`: modern private-key format (supported environments-এ)
+
+Default path উদাহরণ:
 
 ```text
 ~/.ssh/id_ed25519
 ~/.ssh/id_ed25519.pub
 ```
 
-বা RSA হলে:
+অথবা RSA:
 
 ```text
 ~/.ssh/id_rsa
 ~/.ssh/id_rsa.pub
 ```
 
-### Public key display
+- `.pub` file: public key; GitHub-এ দেওয়া যায়
+- extension ছাড়া file: private key; কখনো share করা যাবে না
 
-Git Bash/Linux/macOS:
+## 22.2 Public key GitHub-এ যোগ করা
+
+Public key দেখুন:
 
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
 
-Windows PowerShell:
+তারপর GitHub:
 
-```powershell
-Get-Content $HOME\.ssh\id_ed25519.pub
+```text
+Settings → SSH and GPG keys → New SSH key
 ```
 
-GitHub → Settings → SSH and GPG keys → New SSH key-তে public key paste করুন।
+একটি descriptive title দিন এবং public key paste করুন।
 
-### Connection test
+## 22.3 Connection test
 
 ```bash
 ssh -T git@github.com
 ```
 
-Expected first-time prompt host authenticity confirm করতে বলতে পারে। Successful output সাধারণত authentication success জানায়, shell access না দেওয়ার কথাও বলে।
+প্রথমবার host authenticity confirmation চাইতে পারে। Successful হলে GitHub authentication success message দেয়।
 
-### SSH clone
-
-```bash
-git clone git@github.com:USERNAME/REPOSITORY.git
-```
-
-### Passphrase
-
-Private key passphrase security বাড়ায়। SSH agent ব্যবহার করলে বারবার type করা কমে।
-
-Git Bash example:
+## 22.4 SSH clone ও push
 
 ```bash
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
+git clone git@github.com:username/project.git
+cd project
+# change files
+git add .
+git commit -m "Add help documentation"
+git push
 ```
 
-### Private key কখনো share করবেন না
+## SSH security
 
-`.pub` file share করা যায়; extension ছাড়া private key share/upload করা যাবে না।
+- Private key কাউকে দেবেন না।
+- Passphrase ব্যবহার করা ভালো।
+- Shared computer-এ unprotected key ব্যবহার করবেন না।
+- Compromised key GitHub থেকে remove করুন।
 
 ---
 
-## 18. Multiple GitHub Accounts
+# 23. Multiple GitHub account management
 
-Transcript-এ global `.gitconfig` বদলে এবং `core.sshCommand` দিয়ে account switch দেখানো হয়েছে। এটি কাজ করতে পারে, কিন্তু global identity বারবার বদলানো error-prone। Safer ও scalable পদ্ধতি হলো:
+Transcript-এ personal ও work account-এর জন্য আলাদা SSH key এবং Git config ব্যবহার দেখানো হয়েছে। এই ক্ষেত্রে সবচেয়ে পরিষ্কার পদ্ধতি হলো per-repository identity + `~/.ssh/config` host alias।
 
-1. প্রতিটি account-এর আলাদা SSH key
-2. `~/.ssh/config`-এ host alias
-3. প্রতিটি repository-তে local `user.name` ও `user.email`
-
-> এখানে transcript থেকে অনুমান করে ব্যাখ্যা করা হয়েছে।
-
-### দুটি key তৈরি
+## 23.1 আলাদা key তৈরি
 
 ```bash
 ssh-keygen -t ed25519 -C "personal@example.com" -f ~/.ssh/id_ed25519_personal
@@ -1188,7 +1346,9 @@ ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
 
 দুটি public key সংশ্লিষ্ট GitHub account-এ add করুন।
 
-### `~/.ssh/config`
+## 23.2 SSH config
+
+`~/.ssh/config`:
 
 ```sshconfig
 Host github-personal
@@ -1204,661 +1364,420 @@ Host github-work
     IdentitiesOnly yes
 ```
 
-### Clone
+## 23.3 Clone using alias
 
 Personal:
 
 ```bash
-git clone git@github-personal:PERSONAL-USER/repo.git
+git clone git@github-personal:personal-user/project.git
 ```
 
 Work:
 
 ```bash
-git clone git@github-work:WORK-ORG/repo.git
+git clone git@github-work:work-user/project.git
 ```
 
-### Existing remote বদলানো
+## 23.4 Per-repository commit identity
+
+Personal repository:
 
 ```bash
-git remote set-url origin git@github-work:WORK-ORG/repo.git
+git config user.name "Personal Name"
+git config user.email "personal@example.com"
 ```
 
-### Repository-specific identity
+Work repository:
 
 ```bash
-git config user.name "Work User"
+git config user.name "Work Name"
 git config user.email "work@example.com"
 ```
 
-### Permission denied scenario
+Verify:
 
-Error:
+```bash
+git config --local --list
+git remote -v
+```
+
+## Transcript-এর `core.sshCommand` approach
+
+একটি repository-তে নির্দিষ্ট key force করা যায়:
+
+```bash
+git config core.sshCommand "ssh -i ~/.ssh/id_ed25519_work -o IdentitiesOnly=yes"
+```
+
+এটি repository-local হলে useful। তবে বহু account/host-এর জন্য `~/.ssh/config` সাধারণত বেশি maintainable।
+
+Permission error উদাহরণ:
 
 ```text
-Permission to OWNER/REPO.git denied to OTHER-USER.
+Permission to owner/repository.git denied to other-user.
 ```
 
-কারণ:
+এর অর্থ হতে পারে:
 
-- wrong SSH key/account ব্যবহৃত
-- account-এর write permission নেই
-- remote ভুল account alias ব্যবহার করছে
-
-Check:
-
-```bash
-ssh -T git@github-work
-git remote -v
-git config user.email
-```
+- ভুল GitHub account/key দিয়ে authenticate হয়েছে;
+- account-এর repository write permission নেই;
+- Remote URL ভুল account/host alias ব্যবহার করছে।
 
 ---
 
-# Important Commands Summary Table
+# 24. README best practices
 
-| Command | কাজ | কখন ব্যবহার হয় | সতর্কতা |
-|---|---|---|---|
-| `git config --list` | Active config দেখা | setup/debug | sensitive credential output হলে share নয় |
-| `git init` | নতুন local repository | existing folder version control | ভুল parent folder-এ চালাবেন না |
-| `git status` | file state দেখা | প্রায় সব step-এর আগে/পরে | none |
-| `git add <file>` | specific change stage | selective commit | whole file stage হয়; hunk চাইলে `git add -p` |
-| `git add .` | current path changes stage | ছোট project | unwanted file stage হতে পারে |
-| `git commit -m "..."` | staged snapshot commit | logical কাজ complete | clear message দিন |
-| `git log --oneline` | compact history | commit ID খোঁজা | none |
-| `git reflog` | local HEAD movement | lost commit recovery | local-only; permanent archive নয় |
-| `git reset --hard <id>` | history/working tree target commit-এ | local recovery | destructive |
-| `git revert <id>` | commit undo via new commit | published history | conflict হতে পারে |
-| `git rm <file>` | tracked file delete+stage | file remove | local file delete হয় |
-| `git rm --cached <file>` | tracking বন্ধ | ignored/local config | commit করতে হবে |
-| `git branch` | branch list | context check | none |
-| `git switch -c <name>` | create+switch | feature work | branch base যাচাই করুন |
-| `git merge <branch>` | branch change combine | feature integrate | conflict হতে পারে |
-| `git branch -d <name>` | safe branch delete | merged branch cleanup | current branch delete নয় |
-| `git branch -D <name>` | force delete | intentional discard | unmerged work হারাতে পারে |
-| `git stash push -m "..."` | temporary change store | urgent context switch | permanent backup নয় |
-| `git stash pop` | latest stash apply/remove | work resume | conflict হতে পারে |
-| `git remote add origin <url>` | remote connect | first GitHub setup | duplicate origin error হতে পারে |
-| `git remote -v` | remote inspect | troubleshooting | none |
-| `git push -u origin main` | first push+upstream | publish branch | wrong remote/branch যাচাই করুন |
-| `git push` | commits remote-এ পাঠানো | regular sync | pull/rebase প্রয়োজন হতে পারে |
-| `git pull` | fetch+integrate | remote update নেওয়া | working tree clean রাখুন |
-| `git fetch` | remote history download | inspect before merge | local files বদলায় না |
-| `git clone <url>` | remote repo local copy | project শুরু | correct access method ব্যবহার করুন |
-| `ssh-keygen ...` | SSH key তৈরি | secure auth | existing key overwrite নয় |
-| `ssh -T git@github.com` | SSH auth test | key setup verify | first host prompt পড়ুন |
+Repository-তে source code থাকাই যথেষ্ট নয়; অন্য user যেন project বুঝতে ও চালাতে পারে, তাই ভালো `README.md` জরুরি।
+
+Recommended sections:
+
+````markdown
+# Project Name
+
+Short description.
+
+## Features
+- Feature 1
+- Feature 2
+
+## Tech Stack
+- React
+- Node.js
+
+## Installation
+```bash
+npm install
+```
+
+## Run
+```bash
+npm run dev
+```
+
+## Environment Variables
+Explain required variables without exposing secret values.
+
+## Screenshots / Demo
+Add links or images.
+
+## Usage
+Explain key workflows.
+
+## Author
+Name and profile link.
+
+## License
+License information.
+````
+
+Assignment submission-এর README-তে অন্তত রাখুন:
+
+- assignment/project name;
+- objective;
+- live link, থাকলে;
+- setup steps;
+- used technologies;
+- important features;
+- known limitations;
+- submission instructions অনুযায়ী প্রয়োজনীয় তথ্য।
 
 ---
 
-# Git Workflow Summary
+# 25. Command cheat sheet
 
-## A. নতুন local project
+| Command | কাজ |
+|---|---|
+| `git --version` | installed Git version |
+| `git config --list` | configuration list |
+| `git init` | Local repository initialize |
+| `git status` | Working Tree ও Staging Area status |
+| `git add <file>` | নির্দিষ্ট change stage |
+| `git add .` | current directory-এর changes stage |
+| `git add -A` | repository-wide সব changes stage |
+| `git commit -m "..."` | staged snapshot commit |
+| `git log` | detailed commit history |
+| `git log --oneline` | compact history |
+| `git reflog` | local reference movement history |
+| `git reset --hard <hash>` | branch/index/worktree target commit-এ reset |
+| `git rm <file>` | file delete + deletion stage |
+| `git rm --cached <file>` | tracking থেকে remove, local file রাখে |
+| `git branch` | branch list |
+| `git branch <name>` | branch create |
+| `git switch <name>` | branch switch |
+| `git switch -c <name>` | create + switch |
+| `git branch -m <name>` | current branch rename |
+| `git branch -d <name>` | safely branch delete |
+| `git merge <branch>` | source branch current branch-এ merge |
+| `git merge --abort` | ongoing conflicted merge বাতিল |
+| `git stash` | unfinished change stash |
+| `git stash list` | stash list |
+| `git stash show -p` | stash diff |
+| `git stash pop` | latest stash apply + remove |
+| `git remote add origin <url>` | Remote connect |
+| `git remote -v` | Remote URL verify |
+| `git push -u origin main` | first push + upstream set |
+| `git push` | commits Remote-এ পাঠায় |
+| `git pull` | Remote changes fetch + integrate |
+| `git fetch` | Remote updates download only |
+| `git clone <url>` | Remote repository Local-এ copy |
+
+---
+
+# 26. Common mistakes ও safety warnings
+
+## 26.1 `git add` মানেই commit নয়
+
+`git add` শুধু Staging Area-তে নেয়। History তৈরি হয় `git commit` করলে।
+
+## 26.2 Meaningless commit message
+
+History পড়া ও debugging কঠিন হয়। Logical, descriptive message দিন।
+
+## 26.3 এক commit-এ unrelated changes
+
+Partial revert, review ও cherry-pick কঠিন হয়। Atomic commit করুন।
+
+## 26.4 `git reset --hard` অসতর্কভাবে ব্যবহার
+
+Uncommitted work হারাতে পারে। আগে `git status`, commit বা stash।
+
+## 26.5 `git branch -D` ব্যবহার
+
+Unmerged branch force-delete করে। Safe `-d` default রাখুন।
+
+## 26.6 `.gitignore`-এ secret যোগ করলেই পুরোনো secret history থেকে যায় না
+
+Already committed secret repository history-তে থাকতে পারে। শুধু untrack করাই যথেষ্ট নয়—credential rotate করতে হবে এবং প্রয়োজনে history clean করতে হবে।
+
+## 26.7 Private SSH key share করা
+
+শুধু `.pub` public key share/add করা যায়। Private key secret।
+
+## 26.8 Wrong account দিয়ে push
+
+`git remote -v`, Local identity ও SSH host alias verify করুন।
+
+## 26.9 Pull না করে push
+
+Remote-এ নতুন commits থাকলে push reject হতে পারে। Team workflow অনুযায়ী আগে fetch/pull এবং conflict resolve করুন।
+
+## 26.10 Root directory ভুলে `git add .`
+
+অপ্রয়োজনীয় files stage হতে পারে। সবসময়:
 
 ```bash
-mkdir demo-project
-cd demo-project
+git status
+```
+
+দেখে commit করুন।
+
+---
+
+# 27. Interview revision
+
+## Q1. Git ও GitHub-এর পার্থক্য কী?
+
+Git হলো distributed version control system; GitHub হলো Git repository hosting ও collaboration platform।
+
+## Q2. Working Directory, Staging Area ও Repository কী?
+
+Working Directory-তে edit করা হয়; Staging Area-তে পরবর্তী commit-এর selected changes থাকে; Repository-তে committed history থাকে।
+
+## Q3. `git add` কী করে?
+
+Working Directory-এর নির্দিষ্ট change Staging Area-তে নেয়।
+
+## Q4. `git commit` কী করে?
+
+Staged changes-এর snapshot Local repository history-তে সংরক্ষণ করে।
+
+## Q5. `git fetch` ও `git pull` পার্থক্য?
+
+`fetch` Remote updates download করে কিন্তু current branch integrate করে না; `pull` download করে এবং integrate করে।
+
+## Q6. Merge conflict কেন হয়?
+
+দুই branch একই content region incompatibleভাবে পরিবর্তন করলে Git কোন change রাখবে তা নিজে নির্ধারণ করতে পারে না।
+
+## Q7. `git reset` ও `git revert` পার্থক্য?
+
+`reset` branch pointer/history অবস্থান বদলাতে পারে; `revert` পুরোনো commit undo করতে নতুন commit তৈরি করে। Shared history-তে revert বেশি নিরাপদ।
+
+## Q8. `git stash pop` ও `git stash apply` পার্থক্য?
+
+দুটিই stash apply করে; `pop` successful হলে stash remove করে, `apply` stash রেখে দেয়।
+
+## Q9. Fork ও Clone পার্থক্য?
+
+Fork GitHub server-এ নিজের account-এ repository copy; Clone repository Local machine-এ copy।
+
+## Q10. Pull Request কী?
+
+এক branch/fork-এর changes অন্য branch/repository-তে review ও merge করার proposal।
+
+## Q11. `origin` কী?
+
+Remote repository-এর conventional alias। এটি GitHub-এর বিশেষ keyword নয়; অন্য নামও দেওয়া যায়।
+
+## Q12. HEAD কী?
+
+বর্তমানে checked-out branch বা commit-এর reference।
+
+## Q13. `.gitignore` কেন tracked file ignore করে না?
+
+কারণ `.gitignore` মূলত untracked files-এর tracking শুরু হওয়া বন্ধ করে। Already indexed file আগে `git rm --cached` দিয়ে untrack করতে হয়।
+
+## Q14. SSH public ও private key-এর ভূমিকা কী?
+
+Private key Local-এ secret থাকে; public key GitHub-এ থাকে। Pair-এর cryptographic verification দিয়ে authentication হয়।
+
+---
+
+# 28. Practical assignments
+
+## Assignment 1: Basic Local workflow
+
+1. `git-practice` নামে folder তৈরি করুন।
+2. `git init` করুন।
+3. `README.md` তৈরি করে project description লিখুন।
+4. `git status` দিয়ে untracked state দেখুন।
+5. File stage ও commit করুন।
+6. `git log --oneline` screenshot বা output সংরক্ষণ করুন।
+
+Expected commands:
+
+```bash
+mkdir git-practice
+cd git-practice
 git init
-git config user.name "Your Name"
-git config user.email "you@example.com"
-```
-
-File তৈরি/সম্পাদনার পর:
-
-```bash
+touch README.md
 git status
 git add README.md
 git commit -m "Add initial README"
+git log --oneline
 ```
 
-## B. Feature branch workflow
+## Assignment 2: Atomic commits
+
+1. `README.md`-তে installation section যোগ করুন।
+2. `help.md` নামে নতুন file তৈরি করুন।
+3. দুটি change দুইটি আলাদা commit-এ রাখুন।
+4. History inspect করুন।
+
+Goal: unrelated changes আলাদা commit করা।
+
+## Assignment 3: Branch ও merge
+
+1. `feature/add-usage` branch তৈরি করুন।
+2. README-তে Usage section যোগ করুন।
+3. Commit করুন।
+4. `main`-এ switch করুন।
+5. Feature branch merge করুন।
+6. Safe delete করুন।
 
 ```bash
-git switch -c feature/add-installation-guide
-# edit files
-git status
+git switch -c feature/add-usage
+# edit README.md
 git add README.md
-git commit -m "Add installation guide"
+git commit -m "Add usage instructions"
 git switch main
-git merge feature/add-installation-guide
-git branch -d feature/add-installation-guide
+git merge feature/add-usage
+git branch -d feature/add-usage
 ```
 
-## C. GitHub-এ publish
+## Assignment 4: Merge conflict simulation
 
-```bash
-git branch -M main
-git remote add origin <repository-url>
-git push -u origin main
-```
+1. `main` থেকে `feature/text-a` তৈরি করুন এবং README-এর একই line পরিবর্তন করে commit করুন।
+2. `main`-এ ফিরে `feature/text-b` তৈরি করুন; একই line অন্যভাবে পরিবর্তন করে commit করুন।
+3. একটি branch-এ অন্যটি merge করুন।
+4. Conflict marker পড়ুন এবং manually resolve করুন।
+5. Resolution commit করুন।
 
-## D. Team/PR workflow
+Deliverable: conflict-এর কারণ ও resolution তিন থেকে পাঁচটি বাক্যে লিখুন।
 
-```bash
-git switch main
-git pull
-git switch -c feature/new-task
-# edit
-git add .
-git commit -m "Implement new task"
-git push -u origin feature/new-task
-```
+## Assignment 5: Stash
 
-তারপর GitHub-এ Pull Request তৈরি করুন।
-
-## E. Fork-based open-source workflow
-
-```bash
-git clone <your-fork-url>
-cd repo
-git remote add upstream <original-repo-url>
-git fetch upstream
-git switch main
-git merge upstream/main
-git switch -c fix/issue-description
-# edit, add, commit
-git push -u origin fix/issue-description
-```
-
----
-
-# Common Errors ও Troubleshooting
-
-## Error 1: Not a Git repository
-
-```text
-fatal: not a git repository (or any of the parent directories): .git
-```
-
-**কারণ:** current folder বা parent folder-এ `.git` নেই।
-
-**সমাধান:**
-
-```bash
-pwd
-ls -a
-# সঠিক folder-এ যান, অথবা নতুন project হলে:
-git init
-```
-
----
-
-## Error 2: Nothing to commit
-
-```text
-nothing to commit, working tree clean
-```
-
-এটি error নয়। সব change commit হয়েছে বা কোনো change নেই।
-
----
-
-## Error 3: Pathspec did not match
-
-```text
-error: pathspec 'branch-name' did not match any file(s) known to git
-```
-
-**কারণ:** branch/file name typo বা branch local-এ নেই।
-
-```bash
-git branch --all
-git fetch --all
-```
-
----
-
-## Error 4: Merge conflict
-
-```text
-CONFLICT (content): Merge conflict in README.md
-Automatic merge failed; fix conflicts and then commit the result.
-```
-
-**সমাধান:** file edit → marker remove → `git add` → `git commit`। Abort চাইলে `git merge --abort`।
-
----
-
-## Error 5: Remote origin already exists
-
-```text
-error: remote origin already exists.
-```
-
-```bash
-git remote -v
-git remote set-url origin <correct-url>
-```
-
----
-
-## Error 6: Push rejected / non-fast-forward
-
-```text
-! [rejected] main -> main (non-fast-forward)
-```
-
-Remote-এ local-এর বাইরে নতুন commit আছে।
-
-```bash
-git pull --rebase origin main
-git push
-```
-
-Conflict হলে resolve করে:
-
-```bash
-git add <file>
-git rebase --continue
-```
-
----
-
-## Error 7: Permission denied
-
-```text
-Permission denied (publickey).
-fatal: Could not read from remote repository.
-```
-
-Check:
-
-```bash
-ssh -T git@github.com
-git remote -v
-ssh-add -l
-```
-
-Public key correct account-এ আছে কি না এবং remote SSH URL কি না দেখুন।
-
----
-
-## Error 8: Git wrong account ব্যবহার করছে
-
-```text
-Permission to OWNER/REPO.git denied to WRONG-USER.
-```
-
-- SSH config alias ব্যবহার করুন
-- remote URL alias অনুযায়ী বদলান
-- repository-specific email set করুন
-
----
-
-# Dangerous Commands ও Warnings
-
-## `git reset --hard`
-
-- uncommitted file change মুছে দেয়
-- branch pointer সরায়
-- shared history rewrite হতে পারে
-
-Safer preparation:
-
-```bash
-git status
-git stash push -u -m "backup before hard reset"
-git branch backup-before-reset
-```
-
-## `git branch -D`
-
-Unmerged branch force delete করে। আগে:
-
-```bash
-git log main..branch-name --oneline
-```
-
-## `git rm`
-
-Working directory থেকেও file delete করে। Local file রাখতে `--cached` ব্যবহার করুন।
-
-## Force push
-
-Transcript-এর main demonstration-এ force push নেই, তবে reset-এর পরে অনেকে force push করে। Shared branch-এ avoid করুন। প্রয়োজনে:
-
-```bash
-git push --force-with-lease
-```
-
-`--force`-এর তুলনায় safer, তবু team coordination দরকার।
-
-## Private SSH key
-
-Private key কখনো GitHub, chat, email বা repository-তে upload করবেন না। Leak হলে key remove/revoke করে নতুন key তৈরি করুন।
-
----
-
-# Practical Assignments
-
-## Task 1: Local repository তৈরি
-
-**Difficulty:** Beginner
-
-1. `git-practice` folder তৈরি করুন।
-2. `git init` চালান।
-3. `README.md` তৈরি করুন।
-4. `git status` inspect করুন।
-5. file add ও commit করুন।
-
-```bash
-git init
-git add README.md
-git commit -m "Add initial README"
-```
-
-**Expected result:** clean working tree এবং একটি commit।
-
----
-
-## Task 2: Atomic commits practice
-
-`README.md` update এবং `help.md` creation আলাদা commit-এ করুন।
-
-```bash
-git add README.md
-git commit -m "Update README introduction"
-git add help.md
-git commit -m "Add help documentation"
-```
-
-**লক্ষ্য:** unrelated changes আলাদা রাখা।
-
----
-
-## Task 3: Branch ও merge
-
-```bash
-git switch -c feature/add-heading
-# README edit
-git add README.md
-git commit -m "Add project heading"
-git switch main
-git merge feature/add-heading
-git branch -d feature/add-heading
-```
-
-**Expected result:** main branch-এ heading থাকবে।
-
----
-
-## Task 4: Merge conflict তৈরি ও resolve
-
-1. `main` ও `feature/conflict-demo` branch-এ একই line আলাদাভাবে edit করুন।
-2. Merge করুন।
-3. Conflict marker resolve করুন।
-4. Merge commit সম্পন্ন করুন।
-
-**Hint:** `git status` আপনাকে conflicted file দেখাবে।
-
----
-
-## Task 5: Stash workflow
-
-1. main branch-এ file edit করুন কিন্তু commit করবেন না।
-2. `git stash push -m "WIP demo"`।
+1. একটি tracked file modify করুন কিন্তু commit করবেন না।
+2. `git stash push -m "WIP practice"` চালান।
 3. অন্য branch-এ switch করুন।
-4. main-এ ফিরে `git stash pop`।
+4. আগের branch-এ ফিরে `git stash pop` করুন।
+5. Change commit করুন।
 
-**Expected result:** uncommitted change ফিরে আসবে।
+## Assignment 6: `.gitignore`
 
----
+1. `node_modules/`, `.env` ও `*.log` ignore করুন।
+2. Verify করুন `git status`-এ এগুলো আসছে না।
+3. একটি already tracked `local-config.txt` তৈরি ও commit করুন।
+4. পরে `git rm --cached local-config.txt` দিয়ে untrack করে `.gitignore`-এ যোগ করুন।
 
-## Task 6: `.gitignore`
+## Assignment 7: GitHub push/pull
 
-1. `node_modules/`, `.env`, `debug.log` তৈরি করুন।
-2. `.gitignore` লিখুন।
-3. `git status`-এ ignored items না আসা verify করুন।
+1. GitHub-এ একটি repository তৈরি করুন।
+2. Local repository-তে `origin` add করুন।
+3. `main` push করুন।
+4. GitHub web interface থেকে README-তে একটি ছোট edit commit করুন।
+5. Local-এ `git pull` করুন এবং change verify করুন।
 
-```gitignore
-node_modules/
-.env
-*.log
-```
+## Assignment 8: Pull Request
 
----
+1. Local-এ feature branch তৈরি করুন।
+2. Change commit ও Remote-এ push করুন।
+3. GitHub-এ PR তৈরি করুন।
+4. Meaningful title, description ও testing note দিন।
+5. Review simulation শেষে merge করুন।
+6. Local `main`-এ pull করুন।
 
-## Task 7: GitHub publish
+## Assignment 9: Fork contribution
 
-1. GitHub-এ empty repository তৈরি করুন।
-2. local remote add করুন।
-3. push করুন।
-
-```bash
-git remote add origin <url>
-git branch -M main
-git push -u origin main
-```
-
-**Expected result:** files ও commit history GitHub-এ দৃশ্যমান।
-
----
-
-## Task 8: Pull Request
-
-1. feature branch তৈরি করুন।
-2. change commit করুন।
-3. branch push করুন।
-4. GitHub-এ PR তৈরি করুন।
-5. PR description-এ change ও test লিখুন।
-
----
-
-## Task 9: Fork ও contribution simulation
-
-1. অন্য একটি practice repository fork করুন।
+1. একটি practice repository fork করুন।
 2. নিজের fork clone করুন।
-3. original repository-কে `upstream` হিসেবে add করুন।
-4. branch-এ change করুন।
-5. নিজের fork-এ push ও PR করুন।
+3. `upstream` Remote add করুন।
+4. নতুন branch-এ documentation improvement করুন।
+5. Fork-এ push করে upstream repository-তে PR তৈরি করুন।
 
----
+## Assignment 10: SSH ও multiple accounts
 
-## Task 10: SSH setup
-
-1. SSH key তৈরি করুন।
+1. একটি SSH key pair তৈরি করুন।
 2. Public key GitHub-এ add করুন।
 3. `ssh -T git@github.com` test করুন।
 4. SSH URL দিয়ে repository clone করুন।
-
-**Warning:** private key upload করবেন না।
+5. Optional: personal/work account-এর জন্য আলাদা key ও `~/.ssh/config` alias তৈরি করুন।
 
 ---
 
-# Quick Revision
+# Final mental model
 
-## Core flow
+Git workflow মনে রাখার সবচেয়ে সহজ formula:
 
 ```text
 Edit → Status → Add → Commit → Push
 ```
 
-## Branch flow
+Team workflow:
 
 ```text
-main → create feature branch → commit → push → PR/merge → delete branch
+Pull/Fetch → Branch → Edit → Add → Commit → Push → Pull Request → Review → Merge
 ```
 
-## File states
+Recovery mindset:
 
 ```text
-Untracked → git add → Staged → git commit → Tracked/Clean
-Tracked file edit → Modified → git add → Staged
+ভুল হলে panic নয়:
+status → log/reflog → প্রয়োজন অনুযায়ী restore/revert/reset
 ```
 
-## Remote flow
+সবচেয়ে গুরুত্বপূর্ণ অভ্যাস:
 
-```text
-Local Repository --push--> GitHub
-Local Repository <--fetch/pull-- GitHub
-GitHub Repository --clone--> New Local Repository
-```
-
-## Must-remember commands
-
-```bash
-git status
-git add .
-git commit -m "Message"
-git log --oneline
-git switch -c feature/name
-git merge feature/name
-git stash
-git remote -v
-git push -u origin main
-git pull
-git clone <url>
-```
-
-## Important warnings
-
-- `git reset --hard` destructive
-- `git branch -D` unmerged work delete করতে পারে
-- `.gitignore` tracked file-কে automatically untrack করে না
-- private SSH key গোপন রাখুন
-- token/password repository-তে লিখবেন না
-- ভুল GitHub account দিয়ে push করলে permission error হবে
+1. ঘন ঘন `git status` দেখুন।
+2. ছোট, logical commit করুন।
+3. Meaningful commit message লিখুন।
+4. Feature branch-এ কাজ করুন।
+5. Secret কখনো commit করবেন না।
+6. Dangerous command-এর আগে status, backup, commit বা stash করুন।
+7. ভালো README লিখুন।
 
 ---
 
-# Interview/Exam Questions (with Short Answers)
+## Transcript-based note
 
-### 1. Git কী?
-Git একটি distributed version control system, যা file change ও commit history track করে।
-
-### 2. GitHub কী?
-Git repository host ও collaborate করার cloud platform।
-
-### 3. Git ও GitHub-এর পার্থক্য কী?
-Git local version control tool; GitHub remote hosting ও collaboration service।
-
-### 4. Working directory কী?
-Project-এর যে files সরাসরি edit করা হয় সেই local directory।
-
-### 5. Staging area কী?
-পরবর্তী commit-এ অন্তর্ভুক্ত changes-এর selection area।
-
-### 6. `git init` কী করে?
-Current directory-তে `.git` তৈরি করে Git repository initialize করে।
-
-### 7. `git status` কেন গুরুত্বপূর্ণ?
-Current branch, staged, modified ও untracked changes দেখায়।
-
-### 8. `git add` কি commit তৈরি করে?
-না। এটি change stage করে; commit তৈরি করে `git commit`।
-
-### 9. Commit কী?
-Staged project state-এর identified snapshot, যার ID, author ও message থাকে।
-
-### 10. ভালো commit message কেমন?
-সংক্ষিপ্ত, specific, action-oriented এবং change-এর উদ্দেশ্য বোঝায়।
-
-### 11. `HEAD` কী?
-Current checked-out commit/branch-এর pointer।
-
-### 12. `git log --oneline` কী দেখায়?
-প্রতি commit এক লাইনে short hash ও message।
-
-### 13. `git reflog` কেন ব্যবহার হয়?
-Local `HEAD` movement track এবং lost commit recovery-তে।
-
-### 14. `git reset --hard` ঝুঁকিপূর্ণ কেন?
-Working directory ও staging changes মুছে দিতে পারে এবং branch history সরায়।
-
-### 15. `git reset` ও `git revert` পার্থক্য কী?
-Reset history pointer বদলায়; revert inverse change-এর নতুন commit তৈরি করে।
-
-### 16. Branch কী?
-Independent development line, যেখানে main-কে সরাসরি প্রভাবিত না করে কাজ করা যায়।
-
-### 17. Fast-forward merge কী?
-Target branch না এগোলে pointer সরিয়ে feature tip-এ নেওয়া।
-
-### 18. Merge conflict কেন হয়?
-দুটি branch একই/overlapping অংশে incompatible change করলে।
-
-### 19. Merge conflict কীভাবে resolve করবেন?
-Markers edit করে final content ঠিক করুন, তারপর `git add` ও `git commit`।
-
-### 20. Stash কী?
-Uncommitted changes সাময়িকভাবে সংরক্ষণ করে working tree clean করার ব্যবস্থা।
-
-### 21. `git stash pop` ও `apply` পার্থক্য কী?
-`pop` apply করে stash entry remove করে; `apply` entry রেখে দেয়।
-
-### 22. `.gitignore` কী করে?
-Matching untracked file/folder Git tracking থেকে ignore করে।
-
-### 23. আগে committed file `.gitignore`-এ দিলেই কি ignore হবে?
-না। আগে `git rm --cached <file>` দিয়ে untrack করতে হবে।
-
-### 24. Remote repository কী?
-Network/cloud server-এ থাকা Git repository।
-
-### 25. `origin` কী?
-Default/conventional remote name; এটি কোনো special server নয়।
-
-### 26. `git push -u origin main`-এর `-u` কী করে?
-Local branch-এর upstream tracking branch set করে।
-
-### 27. `fetch` ও `pull` পার্থক্য কী?
-Fetch remote data download করে কিন্তু integrate করে না; pull fetch-এর পর merge/rebase করে।
-
-### 28. Clone কী?
-Remote repository-এর full local copy তৈরি করা।
-
-### 29. Fork ও clone-এর পার্থক্য কী?
-Fork GitHub account-এ server-side copy; clone local machine-এ copy।
-
-### 30. Pull Request কী?
-এক branch/repository-এর changes review করে অন্য branch-এ merge করার proposal।
-
-### 31. HTTPS ও SSH authentication পার্থক্য কী?
-HTTPS browser/token/credential manager ব্যবহার করতে পারে; SSH public/private key pair ব্যবহার করে।
-
-### 32. Public ও private SSH key-এর ভূমিকা কী?
-Public key GitHub-এ থাকে; private key local machine-এ গোপন থেকে authentication প্রমাণ করে।
-
-### 33. “Permission denied to another user” error কেন হয়?
-Wrong account/key selected অথবা repository write permission নেই।
-
-### 34. Multiple GitHub account কীভাবে manage করা ভালো?
-প্রতি account-এর separate SSH key, SSH config host alias এবং per-repository Git identity।
-
-### 35. কেন ছোট logical commit ভালো?
-Review, debugging, cherry-pick ও selective revert সহজ হয়।
-
----
-
-# Key Takeaways
-
-- Git code save করার tool নয়; এটি meaningful project history তৈরি করে।
-- Working directory, staging area, local repository ও remote repository—এই চারটি layer বুঝলে Git workflow পরিষ্কার হয়।
-- `git status` beginner-এর সবচেয়ে গুরুত্বপূর্ণ diagnostic command।
-- `git add` selection করে, `git commit` snapshot তৈরি করে, `git push` remote-এ পাঠায়।
-- Commit ছোট, logical ও meaningful রাখুন।
-- Branch isolation দেয়; merge change integrate করে; conflict হলে মানুষকে সিদ্ধান্ত নিতে হয়।
-- `git reset --hard` ও force deletion সতর্কতার সঙ্গে ব্যবহার করুন। Published history undo করতে `git revert` অধিক নিরাপদ।
-- Stash temporary work সংরক্ষণ করে, কিন্তু permanent backup নয়।
-- `.gitignore` আগে tracked file automatically untrack করে না।
-- GitHub collaboration-এর core flow: branch → commit → push → Pull Request → review → merge।
-- Fork write access ছাড়া contribution-এর common পদ্ধতি; clone local development-এর জন্য।
-- SSH key-এর private অংশ কখনো share করবেন না।
-- Multiple account-এর জন্য global config বারবার বদলানোর বদলে SSH aliases ও repository-specific identity ব্যবহার করা ভালো।
-
----
-
-## Final Practice Checklist
-
-- [ ] Git install ও identity configure করেছি
-- [ ] Repository initialize করতে পারি
-- [ ] File state `git status` দিয়ে বুঝতে পারি
-- [ ] Selective staging ও meaningful commit করতে পারি
-- [ ] Log ও reflog পড়তে পারি
-- [ ] Branch create, switch, merge ও delete করতে পারি
-- [ ] Merge conflict resolve করতে পারি
-- [ ] Stash create/apply/pop করতে পারি
-- [ ] `.gitignore` এবং tracked-file untracking বুঝি
-- [ ] GitHub remote add ও push করতে পারি
-- [ ] PR, fork ও clone workflow বুঝি
-- [ ] HTTPS ও SSH authentication-এর পার্থক্য বুঝি
-- [ ] Multiple GitHub account safely configure করতে পারি
+Transcript-এ প্রদর্শিত মূল বিষয়গুলো—Git installation, configuration, init, status, add, commit, log, reflog, reset, rm, branch, switch, merge, conflict resolution, stash, `.gitignore`, GitHub Remote, push, pull, Pull Request, fork, clone, HTTPS, SSH এবং multiple account handling—এই note-এ অন্তর্ভুক্ত করা হয়েছে। Speech-to-text-এ বিকৃত command ও filename (`README.md`, `git log --oneline`, `git stash show -p`, `git rm --cached`, `ssh-keygen` ইত্যাদি) practical ব্যবহারের উপযোগী সঠিক syntax-এ লেখা হয়েছে।
