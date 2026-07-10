@@ -9,7 +9,7 @@ Output format:
 3. ভাষা হবে সহজ বাংলা, কিন্তু programming terms যেমন variable, function, object, array, primitive, non-primitive, DOM, async, defer, scope ইত্যাদি English-এই রাখবে।
 4. Notes এমনভাবে লিখবে যেন beginner student ভিডিও না দেখেও lesson পুরো বুঝতে পারে।
 5. শুধু summary নয়, detailed explanation দিতে হবে।
-6. ভিডিওতে যেসব concept এসেছে সেগুলো section-wise সাজাবে।ট্রান্সক্রিপ্টে যেসব বিষয় আছে, কথাগুলো অবশ্যই ভিডীও এর ট্রান্সক্রিপ্ট এর সাথে মিল রাখবে(যে কোনো ধরনের গল্প বা অন্য কিছু)।
+6. ভিডিওতে যেসব concept এসেছে সেগুলো section-wise সাজাবে।ট্রান্সক্রিপ্টে যেসব বিষয় আছে, কথাগুলো অবশ্যই ভিডীও এর ট্রান্সক্রিপ্ট এর সাথে মিল রাখবে(যে কোনো ধরনের গল্প বা অন্য কিছু)।এনালজি গুলো সেম রাখবে। ভিডীও এর প্রত্যাক টপিকের আগে টিচার যে কথা গুলো বলে সেগুলোও উল্লেখ করবে।  
 7. যেখানে দরকার table ব্যবহার করবে।
 8. যেখানে code আছে, সেগুলো proper code block-এ দেবে।
 9. প্রতিটি important concept-এর সহজ explanation, example, common mistake, এবং মনে রাখার নিয়ম দেবে।
