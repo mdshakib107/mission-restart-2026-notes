@@ -926,6 +926,7 @@ child.addEventListener(
 ```
 
 ---
+<img width="574" height="484" alt="image" src="https://github.com/user-attachments/assets/1567501b-0630-4fc9-851b-f3f3d3b624b3" />
 
 # ৩২. Event Phases
 
