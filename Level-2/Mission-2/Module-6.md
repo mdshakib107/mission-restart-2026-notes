@@ -2470,3 +2470,1033 @@ const numbers: GenericArray<number> = [1, 2, 3];
 
 এগুলো TypeScript-এর type system-কে আরও expressive, reusable এবং developer-friendly করে।
 
+# অধ্যায় ৪: TypeScript-এ Generic-এর সঙ্গে Interface
+
+## ৪.১ আগের lesson থেকে আজকের lesson
+
+গত ভিডিওতে আমরা দেখেছি, TypeScript-এ কীভাবে `generic` ব্যবহার করতে হয়। সেখানে মূল ধারণাটি ছিল—একটি type-এর নির্দিষ্ট অংশকে parameter হিসেবে গ্রহণ করে একই type structure-কে বিভিন্ন data type-এর জন্য ব্যবহার করা।
+
+এবার আমরা দেখব, একই generic ধারণা কীভাবে `interface`-এর সঙ্গে ব্যবহার করা যায়। অর্থাৎ `generic` ব্যবহার করে কীভাবে একটি `interface`-এর কোনো property-এর type প্রয়োজন অনুযায়ী dynamically পরিবর্তন করা যায়।
+
+চলো, screen-এ ফিরে যাই। আগের code-এ আমরা `type alias` ব্যবহার করেছিলাম। এবার আলাদা একটি file-এ একই ধরনের কাজ `interface` দিয়ে করব। File-টির নাম ধরা যাক:
+
+```text
+generic-with-interface.ts
+```
+
+---
+
+## ৪.২ আগের generic code-কে আরও clean করা
+
+গত lesson-এ আমরা একটি object-এর type সরাসরি generic-এর মধ্যে লিখেছিলাম। কিন্তু একটি object-এ যদি অনেক property থাকে, তাহলে generic type argument-এর ভেতরে পুরো object structure লিখলে code বড় ও কম readable হয়ে যেতে পারে।
+
+ধরো, একটি user object-এ `name`, `age` এবং আরও অনেক property আছে। তখন object structure-টি আলাদা একটি type হিসেবে define করে নেওয়া ভালো। এরপর generic type argument হিসেবে শুধু সেই type-এর নাম ব্যবহার করা যায়।
+
+ধারণাটি এমন:
+
+```ts
+type User = {
+  name: string;
+  age: number;
+};
+```
+
+এখন কোনো generic collection বা generic structure-এ পুরো object type আবার না লিখে শুধু `User` ব্যবহার করা যাবে। এতে code আরও clean হয়।
+
+গত lesson-এ এই কাজটি আমরা `type alias`-এর সাহায্যে করেছি। এবার আমরা দেখব, `interface` ব্যবহার করে generic type কীভাবে তৈরি করা যায়।
+
+---
+
+## ৪.৩ একটি `Developer` interface তৈরি করা
+
+আমরা যেহেতু developer, তাই example হিসেবে একজন developer-এর জন্য একটি interface define করি। একজন developer-এর কিছু basic information থাকবে:
+
+- একটি `name`
+- একটি `salary`
+- কাজ করার জন্য একটি `device`
+- একটি `smartWatch`
+
+Device অবশ্যই গুরুত্বপূর্ণ। Device ছাড়া developer কাজ করবে কীভাবে? Device-এরও কয়েকটি property থাকতে পারে:
+
+- `brand`
+- `model`
+- `releaseYear`
+
+প্রথমে basic interface-টি লিখি:
+
+```ts
+interface Developer {
+  name: string;
+  salary: number;
+  device: {
+    brand: string;
+    model: string;
+    releaseYear: string;
+  };
+}
+```
+
+এখানে `device` নিজেই একটি nested object। তার ভেতরে `brand`, `model` এবং `releaseYear` রয়েছে। Transcript-এর teaching flow অনুযায়ী `releaseYear`-কে এখানে `string` রাখা হয়েছে।
+
+কিন্তু developer-এর কাছে একটি `smartWatch`-ও থাকতে পারে। সমস্যাটি হলো—সব developer একই ধরনের smart watch ব্যবহার করবে না। একেকটি smart watch-এর feature একেক রকম হতে পারে। তাই `smartWatch`-এর type স্থিরভাবে লিখে দিলে interface-টি সব ক্ষেত্রে flexible থাকবে না।
+
+এই জায়গাতেই আমাদের generic দরকার হবে।
+
+---
+
+## ৪.৪ `smartWatch` property-কে dynamic করার প্রয়োজন
+
+ধরো, একজন developer অপেক্ষাকৃত সাধারণ একটি smart watch ব্যবহার করে। সেই watch-এ থাকতে পারে:
+
+- `heartRate`
+- `stopWatch`
+
+অন্যদিকে, আরেকজন developer এমন একটি smart watch ব্যবহার করতে পারে, যেখানে থাকতে পারে:
+
+- `callSupport`
+- `calculator`
+- আরও কোনো model-specific feature
+
+দুই watch-এর property structure এক নয়। তাই `smartWatch`-এর type যদি interface-এর ভেতরে hard-code করে দিই, তাহলে অন্য ধরনের watch ব্যবহার করতে গেলে বারবার interface বদলাতে হবে।
+
+আমরা চাই, `Developer` interface একই থাকবে, কিন্তু `smartWatch`-এর type বাইরে থেকে পাঠানো যাবে। অর্থাৎ যে developer যে ধরনের watch ব্যবহার করবে, তার জন্য সেই watch-এর type generic argument হিসেবে দেওয়া হবে।
+
+---
+
+## ৪.৫ Interface-এ generic type parameter গ্রহণ করা
+
+Generic ব্যবহারের জন্য interface-এর নামের পরে angle bracket-এর মধ্যে একটি type parameter নিতে হবে। Convention অনুযায়ী আমরা এটিকে `T` বলতে পারি।
+
+```ts
+interface Developer<T> {
+  name: string;
+  salary: number;
+  device: {
+    brand: string;
+    model: string;
+    releaseYear: string;
+  };
+  smartWatch: T;
+}
+```
+
+এখানে ভালোভাবে খেয়াল করো:
+
+```ts
+interface Developer<T>
+```
+
+এই `T` হলো একটি dynamic type parameter। পরে যখন আমরা `Developer` interface ব্যবহার করব, তখন angle bracket-এর মধ্যে যে type পাঠাব, `T` সেই type receive করবে।
+
+তারপর interface-এর মধ্যে:
+
+```ts
+smartWatch: T;
+```
+
+লিখে আমরা বলছি, `smartWatch` property-এর type হবে বাইরে থেকে আসা `T`।
+
+অর্থাৎ generic argument হিসেবে যদি একটি watch structure পাঠানো হয়, `smartWatch`-কে ঠিক সেই structure follow করতে হবে।
+
+---
+
+## ৪.৬ Type argument না দিলে কী error হবে?
+
+এখন `Developer` interface ব্যবহার করে একটি object define করার চেষ্টা করি:
+
+```ts
+const poorDeveloper: Developer = {
+  // properties
+};
+```
+
+এখানে TypeScript error দেবে। Error-এর অর্থ হবে অনেকটা এমন:
+
+```text
+Generic type 'Developer<T>' requires 1 type argument(s).
+```
+
+প্রশ্ন হলো, এই error কেন হচ্ছে?
+
+কারণ আমরা interface define করার সময় বলেছি:
+
+```ts
+interface Developer<T>
+```
+
+অর্থাৎ `Developer` interface-এর জন্য একটি type argument প্রয়োজন। সেই argument-টি `smartWatch` property-এর type নির্ধারণ করবে। কিন্তু interface ব্যবহার করার সময় আমরা কোনো type পাঠাইনি। ফলে TypeScript জানে না `T` কী হবে।
+
+এই rule-টি মনে রাখো:
+
+> Generic interface যতটি required type parameter গ্রহণ করবে, interface ব্যবহার করার সময় ততটি type argument পাঠাতে হবে—যদি parameter-এর কোনো default type না থাকে।
+
+---
+
+## ৪.৭ সাধারণ smart watch-এর type সরাসরি পাঠানো
+
+প্রথমে একটি সাধারণ smart watch-এর জন্য inline object type পাঠাই। Transcript-এর example অনুযায়ী watch-টিতে `heartRate` এবং `stopWatch` property থাকবে।
+
+```ts
+const poorDeveloper: Developer<{
+  heartRate: string;
+  stopWatch: boolean;
+}> = {
+  name: "Mr. Poor",
+  salary: 20,
+  device: {
+    brand: "Old Brand",
+    model: "Old Model",
+    releaseYear: "Many years ago",
+  },
+  smartWatch: {
+    heartRate: "200",
+    stopWatch: true,
+  },
+};
+```
+
+এখানে ধাপে ধাপে কী ঘটছে?
+
+### ধাপ ১: Generic type argument পাঠানো
+
+আমরা `Developer`-এর angle bracket-এর মধ্যে এই type পাঠিয়েছি:
+
+```ts
+{
+  heartRate: string;
+  stopWatch: boolean;
+}
+```
+
+তাই `Developer<T>`-এর `T` এখন এই object type receive করবে।
+
+### ধাপ ২: `smartWatch` property-এর type নির্ধারিত হওয়া
+
+Interface-এর ভেতরে ছিল:
+
+```ts
+smartWatch: T;
+```
+
+এখন `T`-এর জায়গায় পাঠানো object type বসবে। অর্থাৎ TypeScript কার্যত `smartWatch`-কে এমনভাবে দেখবে:
+
+```ts
+smartWatch: {
+  heartRate: string;
+  stopWatch: boolean;
+};
+```
+
+### ধাপ ৩: Object-এ সঠিক property দেওয়া
+
+এখন `poorDeveloper.smartWatch`-এর মধ্যে অবশ্যই `heartRate` ও `stopWatch` দিতে হবে:
+
+```ts
+smartWatch: {
+  heartRate: "200",
+  stopWatch: true,
+}
+```
+
+`heartRate`-এর exact বাস্তব মান নিয়ে Instructor মজার ছলে বলেছেন যে তিনি নিশ্চিত নন; প্রয়োজনে doctor-এর কাছে জিজ্ঞেস করা যেতে পারে। এই example-এ value-টি শুধু TypeScript type structure বোঝানোর জন্য string হিসেবে ব্যবহার করা হয়েছে।
+
+---
+
+## ৪.৮ Generic type অনুযায়ী strict checking
+
+এখন ধরে নাও, generic argument-এ আমরা লিখেছি:
+
+```ts
+{
+  heartRate: string;
+  stopWatch: boolean;
+}
+```
+
+কিন্তু object-এর `smartWatch`-এ অন্য property লিখলাম:
+
+```ts
+smartWatch: {
+  callSupport: true,
+  calculator: true,
+}
+```
+
+এক্ষেত্রে TypeScript error দেবে। কারণ `T`-এর মধ্যে `callSupport` বা `calculator` define করা নেই। একইভাবে required `heartRate` ও `stopWatch` না থাকলেও error আসবে।
+
+TypeScript-এর message-এর অর্থ হবে:
+
+```text
+Object literal may only specify known properties.
+```
+
+অথবা কোনো property access-এর ক্ষেত্রে এমন message আসতে পারে:
+
+```text
+Property '...' does not exist on type '...'.
+```
+
+এর মাধ্যমে আমরা বুঝতে পারি, generic ব্যবহার করলেও type checking হারিয়ে যায় না। বরং বাইরে থেকে যে dynamic type পাঠানো হয়, TypeScript সেই type-টিকেই strictভাবে enforce করে।
+
+---
+
+## ৪.৯ ভিন্ন smart watch-এর জন্য ভিন্ন generic type
+
+এবার একজন rich developer-এর object তৈরি করি। এই developer-এর device ও smart watch অন্যরকম হবে। তার smart watch-এ `heartRate` বা `stopWatch`-এর বদলে `callSupport` ও `calculator` থাকতে পারে।
+
+```ts
+const richDeveloper: Developer<{
+  callSupport: boolean;
+  calculator: boolean;
+}> = {
+  name: "Mr. Rich",
+  salary: 100,
+  device: {
+    brand: "HP",
+    model: "Latest Model",
+    releaseYear: "Latest",
+  },
+  smartWatch: {
+    callSupport: true,
+    calculator: true,
+  },
+};
+```
+
+এখানে একই `Developer<T>` interface ব্যবহার করা হয়েছে। কিন্তু এবার `T` হিসেবে পাঠানো হয়েছে:
+
+```ts
+{
+  callSupport: boolean;
+  calculator: boolean;
+}
+```
+
+ফলে `richDeveloper.smartWatch`-এর expected structure আগের developer-এর watch থেকে সম্পূর্ণ আলাদা।
+
+এটাই generic-এর শক্তি। Interface-এর common অংশগুলো একই থাকছে:
+
+```ts
+name
+salary
+device
+```
+
+কিন্তু পরিবর্তনশীল অংশ:
+
+```ts
+smartWatch
+```
+
+Generic type argument অনুযায়ী dynamically পরিবর্তিত হচ্ছে।
+
+---
+
+## ৪.১০ ভুল watch property ব্যবহার করলে কী হবে?
+
+ধরো, rich developer-এর type argument-এ শুধু `callSupport` ও `calculator` আছে:
+
+```ts
+Developer<{
+  callSupport: boolean;
+  calculator: boolean;
+}>
+```
+
+কিন্তু object-এর মধ্যে আমরা আগের watch-এর property রেখে দিলাম:
+
+```ts
+smartWatch: {
+  heartRate: "200",
+  stopWatch: true,
+}
+```
+
+এখন TypeScript বলবে, `heartRate` বা `stopWatch` এই type-এর অংশ নয়। কারণ rich developer-এর watch type হিসেবে আমরা অন্য property পাঠিয়েছি।
+
+তাই object-টিকে পাঠানো generic type-এর সঙ্গে মিলিয়ে লিখতে হবে:
+
+```ts
+smartWatch: {
+  callSupport: true,
+  calculator: true,
+}
+```
+
+অর্থাৎ generic type dynamic হলেও arbitrary নয়। আমরা যে type পাঠাই, object-কে সেই contract মেনে চলতে হয়।
+
+---
+
+## ৪.১১ Inline object type-এর বদলে আলাদা interface ব্যবহার করা
+
+Generic argument-এর মধ্যে বারবার বড় object type লিখলে code আবার লম্বা হয়ে যেতে পারে। Code clean করার জন্য watch-এর type আলাদা `interface` হিসেবে define করা যায়।
+
+প্রথমে সাধারণ watch-এর interface:
+
+```ts
+interface BasicWatch {
+  heartRate: string;
+  stopWatch: boolean;
+}
+```
+
+এখন poor developer-এর type annotation-এ পুরো object structure না লিখে শুধু `BasicWatch` ব্যবহার করা যাবে:
+
+```ts
+const poorDeveloper: Developer<BasicWatch> = {
+  name: "Mr. Poor",
+  salary: 20,
+  device: {
+    brand: "Old Brand",
+    model: "Old Model",
+    releaseYear: "Many years ago",
+  },
+  smartWatch: {
+    heartRate: "200",
+    stopWatch: true,
+  },
+};
+```
+
+একইভাবে rich developer-এর watch-এর জন্য আলাদা interface তৈরি করি:
+
+```ts
+interface AdvancedWatch {
+  callSupport: boolean;
+  calculator: boolean;
+}
+```
+
+এখন rich developer-এর object:
+
+```ts
+const richDeveloper: Developer<AdvancedWatch> = {
+  name: "Mr. Rich",
+  salary: 100,
+  device: {
+    brand: "HP",
+    model: "Latest Model",
+    releaseYear: "Latest",
+  },
+  smartWatch: {
+    callSupport: true,
+    calculator: true,
+  },
+};
+```
+
+এখানে code অনেক বেশি clean হয়েছে। Generic interface-টি dynamic থাকছে, আবার watch-এর structure-ও আলাদা নামের interface-এ পরিষ্কারভাবে সংরক্ষিত হচ্ছে।
+
+Instructor এখানে মনে করিয়ে দিয়েছেন, এই আলাদা watch structure `type alias` দিয়েও লেখা যেত। কিন্তু যেহেতু আমরা interface-এর সঙ্গে generic শিখছি, তাই example-এ interface ব্যবহার করা হয়েছে।
+
+---
+
+## ৪.১২ Interface-এর সঙ্গে একাধিক generic parameter
+
+এখন ধরে নাও, developer-এর আরেকটি property থাকবে—`bike`।
+
+সব developer-এর bike থাকবে না। আবার যাদের bike আছে, তাদের bike-এর model অনুযায়ী property-ও ভিন্ন হতে পারে। তাই bike-এর type-ও dynamic করা দরকার।
+
+একটি generic parameter `T` আমরা smart watch-এর জন্য ব্যবহার করেছি। Bike-এর জন্য দ্বিতীয় generic parameter নিতে পারি। ধরা যাক এর নাম `X`।
+
+```ts
+interface Developer<T, X> {
+  name: string;
+  salary: number;
+  device: {
+    brand: string;
+    model: string;
+    releaseYear: string;
+  };
+  smartWatch: T;
+  bike?: X;
+}
+```
+
+এখানে:
+
+- `T` হলো `smartWatch`-এর dynamic type।
+- `X` হলো `bike`-এর dynamic type।
+- `bike?` লিখে property-টিকে optional করা হয়েছে।
+
+এখন একটি developer-এর bike থাকতেও পারে, নাও থাকতে পারে।
+
+---
+
+## ৪.১৩ দ্বিতীয় type argument না দিলে error
+
+আমাদের interface এখন দুটি type parameter নিচ্ছে:
+
+```ts
+interface Developer<T, X>
+```
+
+কিন্তু যদি ব্যবহার করার সময় শুধু একটি type argument দিই:
+
+```ts
+const poorDeveloper: Developer<BasicWatch> = {
+  // ...
+};
+```
+
+তাহলে TypeScript error দিতে পারে:
+
+```text
+Generic type 'Developer<T, X>' requires 2 type argument(s).
+```
+
+কারণ `T`-এর জন্য আমরা `BasicWatch` পাঠালেও `X`-এর জন্য কোনো type পাঠাইনি। `bike` property optional হলেও generic parameter `X` নিজে এখনো required।
+
+এটি একটি গুরুত্বপূর্ণ tricky case:
+
+> কোনো property optional হলেই তার generic type parameter স্বয়ংক্রিয়ভাবে optional হয়ে যায় না।
+
+যদি generic parameter required থাকে, interface ব্যবহার করার সময় সেই type argument পাঠাতে হবে।
+
+---
+
+## ৪.১৪ Bike-এর type সরাসরি পাঠানো
+
+Bike-এর জন্য inline object type পাঠানো যায়। Transcript-এর example অনুযায়ী bike-এ একটি model বা brand এবং `engineCapacity` থাকতে পারে।
+
+```ts
+const poorDeveloper: Developer<
+  BasicWatch,
+  {
+    model: string;
+    engineCapacity: string;
+  }
+> = {
+  name: "Mr. Poor",
+  salary: 20,
+  device: {
+    brand: "Old Brand",
+    model: "Old Model",
+    releaseYear: "Many years ago",
+  },
+  smartWatch: {
+    heartRate: "200",
+    stopWatch: true,
+  },
+  bike: {
+    model: "Yamaha",
+    engineCapacity: "200cc",
+  },
+};
+```
+
+এখানে generic argument-এর mapping হলো:
+
+```ts
+Developer<BasicWatch, BikeType>
+```
+
+অর্থাৎ:
+
+- প্রথম argument `BasicWatch` → `T` → `smartWatch`
+- দ্বিতীয় argument bike object type → `X` → `bike`
+
+এখন `bike` property দিলে সেটিকে অবশ্যই পাঠানো type-এর structure follow করতে হবে।
+
+---
+
+## ৪.১৫ Bike-এর জন্য আলাদা interface
+
+Code clean রাখার জন্য bike-এর type-ও আলাদা interface হিসেবে define করা যায়:
+
+```ts
+interface Bike {
+  model: string;
+  engineCapacity: string;
+}
+```
+
+এখন developer object-এর type annotation আরও পরিষ্কার হবে:
+
+```ts
+const poorDeveloper: Developer<BasicWatch, Bike> = {
+  name: "Mr. Poor",
+  salary: 20,
+  device: {
+    brand: "Old Brand",
+    model: "Old Model",
+    releaseYear: "Many years ago",
+  },
+  smartWatch: {
+    heartRate: "200",
+    stopWatch: true,
+  },
+  bike: {
+    model: "Yamaha",
+    engineCapacity: "200cc",
+  },
+};
+```
+
+এভাবে nested inline type কমে যায় এবং প্রত্যেকটি structure আলাদা নামে বোঝা যায়।
+
+---
+
+## ৪.১৬ Optional property বনাম default generic type
+
+এখন সমস্যা হলো, rich developer-এর bike নেই। `bike` property optional হওয়ায় object-এর মধ্যে `bike` না দিলেও সমস্যা নেই। কিন্তু `Developer<T, X>` ব্যবহার করার সময় দ্বিতীয় generic argument `X` এখনো দিতে হচ্ছে।
+
+যেমন:
+
+```ts
+const richDeveloper: Developer<AdvancedWatch, null> = {
+  name: "Mr. Rich",
+  salary: 100,
+  device: {
+    brand: "HP",
+    model: "Latest Model",
+    releaseYear: "Latest",
+  },
+  smartWatch: {
+    callSupport: true,
+    calculator: true,
+  },
+};
+```
+
+এখানে bike না থাকলেও শুধু generic requirement পূরণের জন্য `null` পাঠাতে হচ্ছে। Instructor এই জায়গায় প্রশ্ন করেছেন—প্রতিবার কি জোর করে দ্বিতীয় type argument পাঠাতে হবে?
+
+না। Function parameter-এর default value-এর মতো generic type parameter-এরও default type দেওয়া যায়।
+
+---
+
+## ৪.১৭ Function-এর default parameter দিয়ে analogy
+
+এই বিষয়টি বোঝার আগে function-এর পরিচিত example মনে করি। একটি function দুইটি number যোগ করে:
+
+```ts
+const add = (number1: number, number2: number = 0): number => {
+  return number1 + number2;
+};
+```
+
+এখানে `number2`-এর default value `0`।
+
+দুইটি argument দিলে:
+
+```ts
+add(5, 2);
+```
+
+Expected output:
+
+```text
+7
+```
+
+কারণ `5 + 2 = 7`।
+
+শুধু একটি argument দিলে:
+
+```ts
+add(2);
+```
+
+Expected output:
+
+```text
+2
+```
+
+কারণ দ্বিতীয় argument পাঠানো হয়নি। তাই `number2` default হিসেবে `0` নিয়েছে:
+
+```text
+2 + 0 = 2
+```
+
+অর্থাৎ function parameter-এর value না এলে default value ব্যবহার করা যায়। একই ধারণা generic type parameter-এর ক্ষেত্রেও প্রয়োগ করা যায়।
+
+---
+
+## ৪.১৮ Generic parameter-এর default type
+
+Bike-এর generic type parameter `X`-এর default type হিসেবে `null` সেট করি:
+
+```ts
+interface Developer<T, X = null> {
+  name: string;
+  salary: number;
+  device: {
+    brand: string;
+    model: string;
+    releaseYear: string;
+  };
+  smartWatch: T;
+  bike?: X;
+}
+```
+
+এখানে:
+
+```ts
+X = null
+```
+
+এর অর্থ হলো, interface ব্যবহার করার সময় দ্বিতীয় type argument না পাঠালে `X` default হিসেবে `null` হবে।
+
+এখন rich developer-এর জন্য শুধু watch type দিলেই হবে:
+
+```ts
+const richDeveloper: Developer<AdvancedWatch> = {
+  name: "Mr. Rich",
+  salary: 100,
+  device: {
+    brand: "HP",
+    model: "Latest Model",
+    releaseYear: "Latest",
+  },
+  smartWatch: {
+    callSupport: true,
+    calculator: true,
+  },
+};
+```
+
+এখানে mapping হবে:
+
+```text
+T = AdvancedWatch
+X = null
+```
+
+কারণ দ্বিতীয় type argument দেওয়া হয়নি।
+
+Bike property optional হওয়ায় object-এ `bike` না দিলেও চলবে। প্রয়োজনে `bike`-কে explicitভাবে `null`-ও দেওয়া যেতে পারে:
+
+```ts
+const richDeveloper: Developer<AdvancedWatch> = {
+  name: "Mr. Rich",
+  salary: 100,
+  device: {
+    brand: "HP",
+    model: "Latest Model",
+    releaseYear: "Latest",
+  },
+  smartWatch: {
+    callSupport: true,
+    calculator: true,
+  },
+  bike: null,
+};
+```
+
+এখন আর bike-এর type জোর করে প্রতিবার পাঠাতে হচ্ছে না।
+
+---
+
+## ৪.১৯ সম্পূর্ণ code একসঙ্গে
+
+এখন lesson-এর মূল code structure একসঙ্গে দেখা যাক:
+
+```ts
+interface Developer<T, X = null> {
+  name: string;
+  salary: number;
+  device: {
+    brand: string;
+    model: string;
+    releaseYear: string;
+  };
+  smartWatch: T;
+  bike?: X;
+}
+
+interface BasicWatch {
+  heartRate: string;
+  stopWatch: boolean;
+}
+
+interface AdvancedWatch {
+  callSupport: boolean;
+  calculator: boolean;
+}
+
+interface Bike {
+  model: string;
+  engineCapacity: string;
+}
+
+const poorDeveloper: Developer<BasicWatch, Bike> = {
+  name: "Mr. Poor",
+  salary: 20,
+  device: {
+    brand: "Old Brand",
+    model: "Old Model",
+    releaseYear: "Many years ago",
+  },
+  smartWatch: {
+    heartRate: "200",
+    stopWatch: true,
+  },
+  bike: {
+    model: "Yamaha",
+    engineCapacity: "200cc",
+  },
+};
+
+const richDeveloper: Developer<AdvancedWatch> = {
+  name: "Mr. Rich",
+  salary: 100,
+  device: {
+    brand: "HP",
+    model: "Latest Model",
+    releaseYear: "Latest",
+  },
+  smartWatch: {
+    callSupport: true,
+    calculator: true,
+  },
+  bike: null,
+};
+```
+
+এই code-এ common developer structure একবারই লেখা হয়েছে। কিন্তু watch ও bike-এর type developer অনুযায়ী পরিবর্তিত হচ্ছে।
+
+---
+
+## ৪.২০ Step-by-step type flow
+
+`poorDeveloper`-এর ক্ষেত্রে:
+
+```ts
+Developer<BasicWatch, Bike>
+```
+
+TypeScript এটিকে conceptually এমনভাবে resolve করে:
+
+```text
+T = BasicWatch
+X = Bike
+```
+
+ফলে:
+
+```ts
+smartWatch: BasicWatch;
+bike?: Bike;
+```
+
+অন্যদিকে `richDeveloper`-এর ক্ষেত্রে:
+
+```ts
+Developer<AdvancedWatch>
+```
+
+এখানে:
+
+```text
+T = AdvancedWatch
+X = null
+```
+
+কারণ `X`-এর default type `null`। ফলে:
+
+```ts
+smartWatch: AdvancedWatch;
+bike?: null;
+```
+
+এভাবেই একটি interface-এর কিছু অংশ fixed রাখা যায় এবং কিছু অংশ generic parameter-এর মাধ্যমে dynamically পরিবর্তন করা যায়।
+
+---
+
+## ৪.২১ Common Mistakes
+
+### Mistake 1: Required type argument না পাঠানো
+
+```ts
+const developer: Developer = {
+  // ...
+};
+```
+
+`Developer<T, X>`-এর required generic argument না দিলে TypeScript error দেবে। অন্তত `T` পাঠাতে হবে।
+
+সঠিক:
+
+```ts
+const developer: Developer<BasicWatch> = {
+  // ...
+};
+```
+
+এটি তখনই কাজ করবে, যখন দ্বিতীয় parameter `X`-এর default type থাকবে।
+
+### Mistake 2: Generic type-এর বাইরে property দেওয়া
+
+```ts
+interface BasicWatch {
+  heartRate: string;
+  stopWatch: boolean;
+}
+
+const developer: Developer<BasicWatch> = {
+  // ...
+  smartWatch: {
+    callSupport: true,
+  },
+};
+```
+
+`callSupport` `BasicWatch`-এ নেই। তাই object generic contract মানছে না।
+
+### Mistake 3: Required property বাদ দেওয়া
+
+```ts
+smartWatch: {
+  heartRate: "200",
+}
+```
+
+যদি `BasicWatch`-এ `stopWatch` required থাকে, তাহলে সেটি বাদ দেওয়া যাবে না।
+
+### Mistake 4: Property optional, কিন্তু generic parameter required
+
+```ts
+interface Developer<T, X> {
+  smartWatch: T;
+  bike?: X;
+}
+```
+
+এখানে `bike` optional হলেও `X` required। তাই শুধু একটি type argument দিলে error আসতে পারে। সমাধান:
+
+```ts
+interface Developer<T, X = null> {
+  smartWatch: T;
+  bike?: X;
+}
+```
+
+### Mistake 5: Type order ভুল করা
+
+```ts
+Developer<Bike, BasicWatch>
+```
+
+যদি interface declaration হয়:
+
+```ts
+Developer<T, X>
+```
+
+এবং `T` watch, `X` bike বোঝায়, তাহলে argument-এর order বদলে দিলে `smartWatch` ও `bike` ভুল type পাবে।
+
+---
+
+## ৪.২২ Tricky Case: `bike?: X` এবং `X = null`
+
+দুইটি বিষয় আলাদা করে মনে রাখতে হবে:
+
+```ts
+bike?: X;
+```
+
+এখানে `?` বোঝায় object-এ `bike` property না থাকলেও চলবে।
+
+অন্যদিকে:
+
+```ts
+X = null
+```
+
+এটি বোঝায়, দ্বিতীয় generic type argument না পাঠালে `X`-এর default type হবে `null`।
+
+অর্থাৎ:
+
+- Optional property object-এর shape নিয়ন্ত্রণ করে।
+- Default generic type generic argument পাঠানোর requirement নিয়ন্ত্রণ করে।
+
+দুইটি একই বিষয় নয়, তবে একসঙ্গে ব্যবহার করলে bike-বিহীন developer-এর type সহজে লেখা যায়।
+
+---
+
+## ৪.২৩ Technical Note
+
+Transcript-এর কয়েকটি device model, watch brand এবং একটি অতিরিক্ত watch feature স্পষ্টভাবে শনাক্ত করা যায়নি। তাই code-এ নতুন কোনো নির্দিষ্ট brand বা feature উদ্ভাবন না করে কেবল পরিষ্কারভাবে পাওয়া structure—`heartRate`, `stopWatch`, `callSupport`, `calculator`, `model`, `engineCapacity`—ব্যবহার করা হয়েছে। অস্পষ্ট model value-গুলোর জায়গায় neutral example string রাখা হয়েছে।
+
+আরেকটি বিষয় হলো, lesson-এ `releaseYear`-কে `string` হিসেবে define করা হয়েছে। বাস্তব project-এ এটি project requirement অনুযায়ী `number` বা `string`—দুটির যেকোনোটি হতে পারে। মূল code-এ Instructor-এর প্রদর্শিত `string` type বজায় রাখা হয়েছে।
+
+---
+
+## ৪.২৪ Lecture Recap
+
+এই lesson-এ আমরা দেখলাম:
+
+প্রথমে একটি `Developer` interface তৈরি করেছি। Developer-এর `name`, `salary` এবং `device` fixed structure-এর। কিন্তু `smartWatch` একেক developer-এর জন্য একেক রকম হতে পারে। তাই `smartWatch`-এর type hard-code না করে `T` generic parameter-এর মাধ্যমে receive করেছি।
+
+```ts
+interface Developer<T> {
+  smartWatch: T;
+}
+```
+
+এরপর ভিন্ন developer-এর জন্য ভিন্ন watch type পাঠিয়েছি:
+
+```ts
+Developer<BasicWatch>
+```
+
+এবং:
+
+```ts
+Developer<AdvancedWatch>
+```
+
+তারপর bike-এর type-ও dynamic করার জন্য দ্বিতীয় generic parameter `X` যোগ করেছি:
+
+```ts
+interface Developer<T, X> {
+  smartWatch: T;
+  bike?: X;
+}
+```
+
+শেষে bike না থাকলে দ্বিতীয় type argument জোর করে পাঠাতে না হয়, সেজন্য `X`-এর default type `null` করেছি:
+
+```ts
+interface Developer<T, X = null> {
+  smartWatch: T;
+  bike?: X;
+}
+```
+
+অর্থাৎ generic ব্যবহার করে আমরা interface-এর প্রয়োজনীয় অংশগুলো dynamically পরিবর্তন করতে পারি, অথচ interface-এর common structure একই রাখতে পারি।
+
+---
+
+## Final Recap
+
+`Generic with Interface` ব্যবহার করার মূল উদ্দেশ্য হলো—একটি interface-এর common structure অপরিবর্তিত রেখে নির্দিষ্ট property-এর type বাইরে থেকে dynamically গ্রহণ করা।
+
+মূল pattern:
+
+```ts
+interface Developer<T, X = null> {
+  smartWatch: T;
+  bike?: X;
+}
+```
+
+এখানে:
+
+- `T` smart watch-এর type dynamically নির্ধারণ করে।
+- `X` bike-এর type dynamically নির্ধারণ করে।
+- `X = null` দ্বিতীয় type argument-এর default type নির্ধারণ করে।
+- Generic type অনুযায়ী TypeScript strict property checking বজায় রাখে।
+- বড় inline type আলাদা `interface` বা `type alias`-এ রাখলে code আরও clean হয়।
+
+---
+
+## পরবর্তী lesson-এর সংযোগ
+
+Lesson-এর শেষে Instructor পরবর্তী topic-এর introduction দিয়েছেন:
+
+> এবার আমরা দেখব, function-এর সঙ্গে কীভাবে generic ব্যবহার করা হয়। Function-কে basic building block বলা হয়, এবং function-এর মাধ্যমে dynamically অনেক ধরনের কাজ করা যায়।
+
+আপলোড করা transcript এই introduction-এর মাঝখানে শেষ হয়েছে। তাই function-এর সঙ্গে generic ব্যবহারের পরবর্তী ব্যাখ্যা এখানে তৈরি বা অনুমান করে যোগ করা হয়নি।
